@@ -617,6 +617,9 @@ html[data-theme="light"] .app-shell :is(.whatsapp-template-help small,.whatsapp-
 
 /* Keep the connection state readable on compact headers and honest about its state. */
 .app-shell .demo-pill {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
   min-height: 32px;
   padding: 6px 11px;
   gap: 8px;
