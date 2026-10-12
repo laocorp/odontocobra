@@ -27,6 +27,25 @@ export type StatementPdfData = {
   payments: Array<{ date: string; receipt: string; method: string; received: string; equivalent: string; rate: string; status: string }>
 }
 
+export type PlanPdfData = {
+  clinicName: string
+  clinicPhone: string
+  planCode: string
+  patientName: string
+  patientId: string
+  patientPhone: string
+  treatment: string
+  issuedAt: string
+  total: string
+  paid: string
+  balance: string
+  hasBalance: boolean
+  status: string
+  nextDue: string
+  items: string[]
+  installments: string[]
+}
+
 const winAnsi: Record<string, number> = {
   '€': 0x80, '‚': 0x82, 'ƒ': 0x83, '„': 0x84, '…': 0x85, '†': 0x86, '‡': 0x87,
   'ˆ': 0x88, '‰': 0x89, 'Š': 0x8a, '‹': 0x8b, 'Œ': 0x8c, 'Ž': 0x8e,
@@ -324,6 +343,123 @@ function buildStatementDocument(data: StatementPdfData) {
   addLine('Este estado es informativo; cada recibo individual conserva el detalle de su pago.')
   finishPage()
   return serializePages(streams)
+}
+
+function buildPlanDocument(data: PlanPdfData) {
+  const streams: string[] = []
+  let operators: string[] = []
+  let y = 0
+  let rowIndex = 0
+  const text = (x: number, top: number, size: number, value: string, bold = false) => {
+    operators.push('0.23 0.21 0.18 rg')
+    operators.push(`BT /${bold ? 'F2' : 'F1'} ${size} Tf ${x} ${top} Td (${pdfLiteral(value)}) Tj ET`)
+  }
+  const rect = (x: number, bottom: number, width: number, height: number, color: string) => {
+    operators.push(`${color} rg ${x} ${bottom} ${width} ${height} re f`)
+  }
+  const rule = (top: number) => operators.push(`0.89 0.86 0.79 RG 48 ${top} m 547 ${top} l S`)
+  const fit = (value: string, max: number) => value.length > max ? `${value.slice(0, max - 1).trimEnd()}…` : value
+  const finishPage = () => {
+    rule(52)
+    text(48, 35, 8, fit(`${data.clinicName} · Constancia de saldo · ${data.planCode}`, 90))
+    streams.push(`${operators.join('\n')}\n`)
+  }
+  const startPage = () => {
+    operators = []
+    rect(0, 0, 595, 842, '1 1 1')
+    rect(0, 832, 595, 10, '0.53 0.41 0.19')
+    rect(48, 781, 5, 30, '0.53 0.41 0.19')
+    text(64, 798, 16, fit(data.clinicName, 40), true)
+    if (data.clinicPhone) text(64, 782, 8, fit(`Tel. ${data.clinicPhone}`, 50))
+    text(48, 744, 9, 'CONSTANCIA INFORMATIVA DE SALDO', true)
+    text(48, 716, 18, 'Plan de pago', true)
+    text(390, 744, 9, fit(data.planCode, 22), true)
+    text(390, 728, 8, fit(`Emitida: ${data.issuedAt}`, 30))
+
+    rect(48, 630, 499, 62, '0.99 0.98 0.95')
+    text(62, 674, 7, 'PACIENTE', true)
+    text(62, 654, 12, fit(data.patientName, 48), true)
+    text(62, 638, 8, fit(`C.I. ${data.patientId || '—'} · Tel. ${data.patientPhone || '—'}`, 82))
+
+    const cards: Array<[number, string, string]> = [
+      [48, 'TOTAL ACORDADO', data.total],
+      [218, 'ABONADO', data.paid],
+      [388, 'SALDO ACTUAL', data.balance],
+    ]
+    for (const [index, [x, label, value]] of cards.entries()) {
+      rect(x, 548, 159, 63, index === 2 ? '0.96 0.93 0.86' : '0.99 0.98 0.95')
+      text(x + 12, 591, 7, label, true)
+      text(x + 12, 568, 14, fit(value, 24), true)
+    }
+    text(48, 526, 9, fit(`Estado del plan: ${data.status} · Próxima cuota: ${data.nextDue}`, 90), true)
+    y = 499
+  }
+  const newPage = () => {
+    finishPage()
+    startPage()
+  }
+  const addSection = (label: string) => {
+    if (y < 120) newPage()
+    rect(48, y - 7, 499, 23, '0.96 0.93 0.86')
+    rect(48, y - 7, 3, 23, '0.53 0.41 0.19')
+    text(60, y + 1, 9, label, true)
+    y -= 33
+  }
+  const addLine = (value: string, bold = false, fontSize = 9) => {
+    let remaining = value
+    const parts: string[] = []
+    const maxCharacters = fontSize >= 10 ? 82 : 92
+    while (remaining.length > maxCharacters) {
+      const boundary = remaining.lastIndexOf(' ', maxCharacters)
+      const splitAt = boundary > 42 ? boundary : maxCharacters
+      parts.push(remaining.slice(0, splitAt).trimEnd())
+      remaining = remaining.slice(splitAt).trimStart()
+    }
+    parts.push(remaining)
+    for (const part of parts) {
+      if (y < 100) newPage()
+      if (rowIndex % 2 === 1) rect(48, y - 10, 499, 25, '0.99 0.98 0.95')
+      text(58, y, fontSize, part, bold)
+      rule(y - 11)
+      y -= 25
+      rowIndex += 1
+    }
+  }
+
+  startPage()
+  addSection('TRATAMIENTO Y CONCEPTOS')
+  addLine(data.treatment, true)
+  for (const item of data.items) addLine(item)
+
+  addSection('CUOTAS PENDIENTES')
+  if (data.installments.length) for (const installment of data.installments) addLine(installment)
+  else addLine(data.hasBalance ? 'No hay detalle de cuotas disponible en este momento.' : 'Este plan no registra cuotas pendientes.')
+
+  y -= 8
+  addSection('CONSTANCIA')
+  addLine(!data.hasBalance
+    ? 'A la fecha de emisión, este plan no presenta saldo pendiente.'
+    : `A la fecha de emisión, este plan registra un saldo pendiente de ${data.balance} por concepto de ${data.treatment}.`)
+  addLine('El estado “Por vencer” indica que el saldo aún no está vencido; “Vencido” señala cuotas con fecha de pago superada.')
+  addLine('Documento informativo basado en los registros del consultorio. No es factura fiscal ni sustituye el contrato o los recibos de pago.')
+
+  if (y < 150) newPage()
+  y -= 24
+  rule(y + 10)
+  text(68, y - 8, 8, 'Firma del paciente / fecha')
+  text(354, y - 8, 8, 'Firma del consultorio')
+  finishPage()
+  return serializePages(streams)
+}
+
+export function downloadPlanPdf(data: PlanPdfData) {
+  const blob = buildPlanDocument(data)
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `OdontoCuenta-plan-${data.planCode.replace(/[^a-zA-Z0-9-]/g, '-')}.pdf`
+  link.click()
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
 
 export function downloadReceiptPdf(data: ReceiptPdfData) {

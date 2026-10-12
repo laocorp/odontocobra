@@ -6,7 +6,7 @@ import { cloneElement, isValidElement, useCallback, useEffect, useMemo, useRef, 
 import type { Session } from '@supabase/supabase-js'
 import { cloudConfigured, supabase } from './supabase'
 import { cents, convertLocalMinorToUsdCents, convertUsdCentsToLocalMinor, localInputToMinor, sumPaymentAllocationCents, usdInputToCents, validatePaymentAllocationTotal } from '@odontocuenta/domain'
-import { downloadReceiptPdf, downloadStatementPdf, printReceiptDocument, printStatementPdf, type ReceiptPdfData, type StatementPdfData } from './receipt-pdf'
+import { downloadPlanPdf, downloadReceiptPdf, downloadStatementPdf, printReceiptDocument, printStatementPdf, type PlanPdfData, type ReceiptPdfData, type StatementPdfData } from './receipt-pdf'
 import {
   Activity, ArrowDownLeft, ArrowDownRight, ArrowRight, Bell, BriefcaseMedical,
   CalendarDays, Check, ChevronDown, CircleDollarSign, ClipboardList, CreditCard, Download, Ellipsis,
@@ -180,7 +180,7 @@ const navGroups: { title: string; items: { label: Page; icon: typeof Home }[] }[
 ]
 
 function Logo() { return <div className="brand-mark"><span className="leaf leaf-one" /><span className="leaf leaf-two" /><span>OdontoCuenta</span></div> }
-function Badge({ children, tone = 'neutral' }: { children: ReactNode; tone?: string }) { return <span className={`badge ${tone}`}>{children}</span> }
+function Badge({ children, tone = 'neutral', title }: { children: ReactNode; tone?: string; title?: string }) { return <span className={`badge ${tone}`} title={title}>{children}</span> }
 function Modal({ title, subtitle, close, children }: { title: string; subtitle?: string; close: () => void; children: ReactNode }) {
   const modalRef = useRef<HTMLElement>(null)
   const closeRef = useRef(close)
@@ -1328,7 +1328,7 @@ export function App() {
         <div className="page-content">
         {page === 'Inicio' && <Dashboard patients={patients} plans={plans} payments={localizedPayments} totalDue={totalDue} monthlyCollectedUsdCents={monthlyCollectedUsdCents} showBalance={showBalance} setShowBalance={setShowBalance} go={setPage} open={openModal} canManage={!cloudConfigured || membershipRole === 'owner'} />}
         {page === 'Pacientes' && <Patients patients={filteredPatients} search={search} setSearch={setSearch} filter={patientFilter} setFilter={setPatientFilter} open={openModal} canManage={!cloudConfigured || membershipRole === 'owner'} onEdit={editPatient} onArchive={archivePatient} onStatement={setStatementPatient} />}
-        {page === 'Planes de pago' && <Plans plans={plans} search={search} setSearch={setSearch} filter={planFilter} setFilter={setPlanFilter} open={openModal} canCreate={!cloudConfigured || membershipRole === 'owner'} />}
+        {page === 'Planes de pago' && <Plans plans={plans} patients={patients} installments={installments} clinicName={clinicName} clinicPhone={clinicPhone} timezone={clinicTimezone} search={search} setSearch={setSearch} filter={planFilter} setFilter={setPlanFilter} open={openModal} canCreate={!cloudConfigured || membershipRole === 'owner'} />}
         {page === 'Pagos' && <Payments payments={localizedPayments} search={search} setSearch={setSearch} monthlyCollectedUsdCents={monthlyCollectedUsdCents} canReverse={cloudConfigured && membershipRole === 'owner'} onReverse={reversePayment} onReceipt={setReceiptPayment} onExport={() => void exportPaymentsCsv()} />}
         {page === 'Servicios' && <Services notify={notify} clinicId={clinicId} services={services} setServices={setServices} canManage={!cloudConfigured || membershipRole === 'owner'} onUse={service => { setPlanPatient(''); setPlanServiceChoice(''); setPlanItems([{ serviceId: String(service.id), name: service.name, category: service.category, description: service.description ?? '', amount: (service.priceCents / 100).toFixed(2).replace('.', ',') }]); setPlanInstallments('1'); setModal('plan') }} />}
         {page === 'Reportes' && <Reports clinicName={clinicName} totalDue={totalDue} payments={localizedPayments} plans={plans} timezone={clinicTimezone} monthlyCollectedUsdCents={monthlyCollectedUsdCents} monthlyConfirmedPaymentCount={monthlyConfirmedPaymentCount} />}
@@ -1681,7 +1681,7 @@ function Patients({ patients, search, setSearch, filter, setFilter, open, canMan
             <tr className="mobile-table-card" key={patient.id}>
               <td data-label="Paciente"><div className="patient-row-info"><PersonName name={patient.name} initials={patient.initials} tone={index} /><small className="cell-sub patient-email">{patient.nationalId ? 'C.I. ' + patient.nationalId : patient.email || 'Paciente nuevo'}</small></div></td>
               <td data-label="Teléfono">{patient.phone || 'Sin teléfono'}</td>
-              <td data-label="Estado"><Badge tone={patient.status === 'Al día' ? 'success' : patient.status === 'Vencido' ? 'danger' : 'warning'}><i />{patient.status}</Badge></td>
+              <td data-label="Estado"><Badge tone={patient.status === 'Al día' ? 'success' : patient.status === 'Vencido' ? 'danger' : 'warning'} title={patient.status === 'Pendiente' ? 'Tiene saldo por pagar; ninguna cuota vencida según el registro.' : undefined}><i />{patient.status === 'Pendiente' ? 'Con saldo' : patient.status}</Badge></td>
               <td data-label="Saldo"><b className="key-balance">{money(patient.balance)}</b></td>
               <td data-label="Acciones"><div className="row-actions"><button type="button" className="row-action row-action-primary" onClick={() => onStatement(patient)}>Ver cuenta</button>{canManage && <><button type="button" className="row-action" onClick={() => onEdit(patient)}>Editar</button><button type="button" className="row-action row-action-danger" onClick={() => onArchive(patient)}>Archivar</button></>}</div></td>
             </tr>
@@ -1693,10 +1693,34 @@ function Patients({ patients, search, setSearch, filter, setFilter, open, canMan
     </section>
   )
 }
-function Plans({ plans, search, setSearch, filter, setFilter, open, canCreate }: { plans: Plan[]; search: string; setSearch: (v: string) => void; filter: string; setFilter: (v: string) => void; open: (m: 'patient' | 'payment' | 'plan') => void; canCreate: boolean }) {
+function Plans({ plans, patients, installments, clinicName, clinicPhone, timezone, search, setSearch, filter, setFilter, open, canCreate }: { plans: Plan[]; patients: Patient[]; installments: UnpaidInstallment[]; clinicName: string; clinicPhone: string; timezone: string; search: string; setSearch: (v: string) => void; filter: string; setFilter: (v: string) => void; open: (m: 'patient' | 'payment' | 'plan') => void; canCreate: boolean }) {
   const list = plans.filter(plan => (plan.planCode + ' ' + plan.patient + ' ' + plan.treatment).toLowerCase().includes(search.toLowerCase()))
     .filter(plan => filter === 'Todos los planes' || plan.status === filter)
   const countLabel = plans.length + ' ' + (plans.length === 1 ? 'plan activo' : 'planes activos')
+  const downloadPlan = (plan: Plan) => {
+    const patient = patients.find(item => String(item.id) === String(plan.patientId)) ?? patients.find(item => item.name === plan.patient)
+    const balance = Math.max(0, Math.round((plan.total - plan.paid) * 100)) / 100
+    const openPlanInstallments = installments.filter(item => String(item.plan_id) === String(plan.id))
+    const data: PlanPdfData = {
+      clinicName,
+      clinicPhone,
+      planCode: plan.planCode,
+      patientName: patient?.name ?? plan.patient,
+      patientId: patient?.nationalId ?? '',
+      patientPhone: patient?.phone ?? '',
+      treatment: plan.treatment,
+      issuedAt: formatClinicDate(new Date(), timezone, 'long'),
+      total: money(plan.total),
+      paid: money(plan.paid),
+      balance: money(balance),
+      hasBalance: balance > 0,
+      status: plan.status,
+      nextDue: plan.nextDue,
+      items: (plan.items ?? []).map(item => `${item.name} · ${item.category}${item.description ? ` · ${item.description}` : ''} · ${money(item.amount)}`),
+      installments: openPlanInstallments.map(item => `Cuota ${item.sequence} · vence ${formatDueDate(item.due_on)} · ${item.status === 'overdue' ? 'vencida' : 'pendiente'} · saldo ${money(item.balance_usd_cents / 100)}`),
+    }
+    downloadPlanPdf(data)
+  }
   return (
     <section className="panel listing-panel listing-panel--plans">
       <div className="list-toolbar">
@@ -1708,7 +1732,7 @@ function Plans({ plans, search, setSearch, filter, setFilter, open, canCreate }:
       </div>
       <div className="table-wrap mobile-card-list">
         <table>
-          <thead><tr><th>PACIENTE / TRATAMIENTO</th><th>PROGRESO DEL PLAN</th><th>PRÓXIMA CUOTA</th><th>ESTADO</th><th className="right">SALDO</th></tr></thead>
+            <thead><tr><th>PACIENTE / TRATAMIENTO</th><th>PROGRESO DEL PLAN</th><th>PRÓXIMA CUOTA</th><th>ESTADO</th><th className="right">SALDO</th><th>CONSTANCIA</th></tr></thead>
           <tbody>{list.map((plan, index) => {
             const pct = plan.total > 0 ? Math.min(100, Math.round(plan.paid / plan.total * 100)) : 0
             return <tr className="mobile-table-card" key={plan.id}>
@@ -1716,7 +1740,8 @@ function Plans({ plans, search, setSearch, filter, setFilter, open, canCreate }:
               <td data-label="Progreso"><div className="plan-progress"><div className="progress-caption"><b>{money(plan.paid)}</b><span>{pct}%</span></div><div className="progress-track"><i style={{ width: String(pct) + '%' }} /></div><small className="cell-sub">de {money(plan.total)}</small></div></td>
               <td data-label="Próxima cuota">{plan.nextDue}</td>
               <td data-label="Estado"><Badge tone={plan.status === 'Vencido' ? 'danger' : plan.status === 'Por vencer' ? 'warning' : 'success'}><i />{plan.status}</Badge></td>
-              <td data-label="Saldo" className="right"><b className="key-balance">{money(plan.total - plan.paid)}</b></td>
+              <td data-label="Saldo" className="right"><b className="key-balance">{money(Math.max(0, plan.total - plan.paid))}</b></td>
+              <td data-label="Constancia"><button type="button" className="row-action row-action-primary" onClick={() => downloadPlan(plan)} aria-label={`Descargar constancia PDF del plan ${plan.planCode} de ${plan.patient}`}><Download size={14} /> PDF del plan</button></td>
             </tr>
           })}</tbody>
         </table>
