@@ -4,7 +4,7 @@ Plataforma web de cobros odontológicos basada en USD, con gestión de pacientes
 
 ## Desarrollo local
 
-Requisitos: Node.js 20.19+ o 22.12+, pnpm 11 y Docker Desktop (para Supabase local).
+Requisitos: Node.js 22.12 o superior dentro de la rama 22.x, pnpm 11 y Docker Desktop (para Supabase local). El campo `engines.node` del `package.json` raíz fija Node 22 para Nixpacks/Dokploy, que de otro modo puede elegir Node 18 por defecto.
 
 1. Copia `.env.example` a `.env.local` y configura un proyecto Supabase de desarrollo.
 2. `pnpm install`
