@@ -1470,20 +1470,26 @@ function PatientStatement({ clinicName, clinicPhone, messageTemplate, patient, c
 
   return <Modal title="Estado de cuenta" subtitle={patient.name} close={close}>
     <div className="statement-content">
-      <div className="statement-contact"><b>{patient.name}</b><span>{patient.nationalId ? `C.I. ${patient.nationalId}` : 'Paciente'}</span><span>{patient.phone}</span></div><small className="muted">Fecha de corte: {cutoff}</small>
-      <div className="statement-overview" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 10, margin: '20px 0' }}>
+      <div className="statement-contact">
+        <div className="statement-contact-details">
+          {patient.nationalId && <span><small>Cédula</small><b>{patient.nationalId}</b></span>}
+          <span><small>Teléfono</small><b>{patient.phone}</b></span>
+        </div>
+      </div>
+      <small className="muted statement-cutoff">Fecha de corte: {cutoff}</small>
+      <div className="statement-overview">
         <article className="stat-card"><span className="stat-label">Planes activos</span><strong>{patientPlans.length}</strong></article>
         <article className="stat-card"><span className="stat-label">Total acordado</span><strong>{money(total)}</strong></article>
         <article className="stat-card"><span className="stat-label">Saldo pendiente</span><strong>{money(Math.max(patient.balance, total - paid))}</strong></article>
       </div>
-      <section className="statement-section"><h3>Planes de tratamiento</h3>
-        {patientPlans.length ? patientPlans.map(plan => <article className="due-item" key={plan.id}><div className="due-info"><b>{plan.planCode} · {plan.treatment}</b>{plan.items?.length ? <div className="statement-plan-items">{plan.items.map(item => <small key={item.id}>{item.name} · {item.category}{item.description ? ` · ${item.description}` : ''} · {money(item.amount)}</small>)}</div> : null}<span>{money(plan.paid)} abonados de {money(plan.total)}</span><small>Próxima cuota: {plan.nextDue} · {plan.status}</small></div><b className="due-amount">{money(Math.max(0, plan.total - plan.paid))}</b></article>) : <p className="muted">Este paciente aún no tiene planes activos.</p>}
+      <section className="statement-section statement-section--plans"><h3>Planes de tratamiento</h3>
+        {patientPlans.length ? patientPlans.map(plan => <article className="due-item statement-entry statement-entry--plan" key={plan.id}><div className="due-info"><b>{plan.planCode} · {plan.treatment}</b>{plan.items?.length ? <div className="statement-plan-items">{plan.items.map(item => <small key={item.id}>{item.name} · {item.category}{item.description ? ` · ${item.description}` : ''} · {money(item.amount)}</small>)}</div> : null}<span>{money(plan.paid)} abonados de {money(plan.total)}</span><small>Próxima cuota: {plan.nextDue} · {plan.status}</small></div><b className="due-amount">{money(Math.max(0, plan.total - plan.paid))}</b></article>) : <p className="muted">Este paciente aún no tiene planes activos.</p>}
       </section>
-      <section className="statement-section"><h3>Cuotas abiertas</h3>
+      <section className="statement-section statement-section--installments"><h3>Cuotas abiertas</h3>
         {openInstallments.length ? openInstallments.map(item => {
           const message = renderWhatsAppMessage(messageTemplate, { nombre: patient.name, clínica: clinicName, monto: money(item.balance_usd_cents / 100), fecha: formatDueDate(item.due_on), tratamiento: item.description, teléfono: clinicPhone || 'este número' })
           const link = patient.whatsappConsentAt ? whatsappUrl(patient.phone, message) : ''
-          return <article className="due-item" key={item.id}><div className="due-info"><b>{item.description} · Cuota {item.sequence}</b><span>Vence {formatDueDate(item.due_on)}</span><small>{item.status === 'overdue' ? 'Vencida' : 'Pendiente'}</small></div><b className="due-amount">{money(item.balance_usd_cents / 100)}</b>{link ? <a className="button secondary compact whatsapp-send" href={link} target="_blank" rel="noopener noreferrer"><MessageCircle size={15} /> Preparar WhatsApp</a> : <button className="button secondary compact whatsapp-send" type="button" disabled title={patient.whatsappConsentAt ? 'Agrega un teléfono válido al paciente' : 'Registra su autorización en la ficha del paciente'}><MessageCircle size={15} /> WhatsApp</button>}</article>
+          return <article className="due-item statement-entry statement-entry--installment" key={item.id}><div className="due-info"><b>{item.description} · Cuota {item.sequence}</b><span>Vence {formatDueDate(item.due_on)}</span><small>{item.status === 'overdue' ? 'Vencida' : 'Pendiente'}</small></div><b className="due-amount">{money(item.balance_usd_cents / 100)}</b>{link ? <a className="button secondary compact whatsapp-send" href={link} target="_blank" rel="noopener noreferrer"><MessageCircle size={15} /> Preparar WhatsApp</a> : <button className="button secondary compact whatsapp-send" type="button" disabled title={patient.whatsappConsentAt ? 'Agrega un teléfono válido al paciente' : 'Registra su autorización en la ficha del paciente'}><MessageCircle size={15} /> WhatsApp</button>}</article>
         }) : <p className="muted">Sin cuotas abiertas detalladas.</p>}
       </section>
       <section className="statement-section"><h3>{supabase && clinicId ? 'Historial de abonos' : 'Abonos recientes'}</h3>
