@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+.supabase/
+supabase/.temp/
+coverage/
+*.tsbuildinfo
+Capturas/
+apps/web/src/__audit_migrations.ts
+apps/web/src/__migration_*.ts

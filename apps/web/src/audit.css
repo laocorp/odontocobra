@@ -1,0 +1,88 @@
+.settings-panel[hidden] {
+  display: none !important;
+}
+
+.audit-launcher {
+  position: static;
+  box-shadow: 0 10px 28px #173d3026;
+}
+
+.audit-launcher-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.audit-panel {
+  align-self: start;
+  padding: 24px;
+}
+
+.audit-panel .panel-head {
+  margin-bottom: 18px;
+}
+
+.audit-count {
+  color: #73847c;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.audit-list {
+  display: grid;
+}
+
+.audit-event {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 12px;
+  padding: 16px 0;
+  border-top: 1px solid #e9efec;
+}
+
+.audit-event-mark {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 50%;
+  background: #e8f4ed;
+  color: #147258;
+}
+
+.audit-event-content {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.audit-event-content b {
+  color: #183b32;
+  font-size: 14px;
+}
+
+.audit-event-content p {
+  overflow-wrap: anywhere;
+  margin: 0;
+  color: #65766e;
+  font-size: 13px;
+}
+
+.audit-event-content small {
+  color: #8a9691;
+  font-size: 11px;
+}
+
+.audit-error {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #fff3f1;
+  color: #9b4941;
+  font-size: 13px;
+}
+
+@media (max-width: 560px) {
+  .audit-panel {
+    padding: 18px;
+  }
+}

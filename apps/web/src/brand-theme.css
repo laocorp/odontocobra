@@ -1,0 +1,616 @@
+:root {
+  --brand-ivory: #faf7f3;
+  --brand-surface: #ffffff;
+  --brand-surface-soft: #f4eee7;
+  --brand-gold: #d8b66d;
+  --brand-gold-light: #f3da8a;
+  --brand-gold-deep: #c7a05b;
+  --brand-action: #8f6e36;
+  --brand-taupe: #77746f;
+  --brand-ink: #38342f;
+  --brand-border: #e7ded2;
+}
+
+html, body { background: var(--brand-ivory); color: var(--brand-ink); }
+.app-shell, .main-area, .page-wrap { background: var(--brand-ivory); color: var(--brand-ink); }
+.sidebar, .topbar, .panel, .stat-card, .service-card, .settings-panel,
+.settings-menu, .modal, .section-intro, .report-heading {
+  background-color: var(--brand-surface);
+  border-color: var(--brand-border);
+}
+.brand-mark { color: var(--brand-ink); }
+.brand-mark .leaf { background: linear-gradient(145deg, var(--brand-gold-deep), var(--brand-gold-light)); }
+.brand-mark .leaf-two { background: var(--brand-gold-light); border-color: var(--brand-surface); }
+.clinic-switch { background: #fbf8f3; border-color: var(--brand-border); }
+.clinic-switch > svg, .nav-link svg, .profile > svg { color: #9b9388; }
+.clinic-avatar, .help-icon { color: var(--brand-action); background: #f4eee7; }
+.nav-group > p { color: #9b9388; }
+.nav-link { color: #77746f; }
+.help-card { background: #faf7f3; border-color: var(--brand-border); }
+.help-card > span { color: var(--brand-taupe); }
+.help-card > button { color: var(--brand-action); }
+.page-heading h1, .panel-head h2, .listing-panel h2, .settings-title h2,
+.section-intro b, .report-heading b { color: var(--brand-ink); }
+.muted, .eyebrow, .stat-label, .panel-head p, .listing-panel > p,
+.cell-sub, .table-foot, .app-footer { color: var(--brand-taupe); }
+.nav-link.active, .settings-menu button.selected { color: var(--brand-action); background: var(--brand-surface-soft); }
+.nav-link.active svg, .text-link, .panel-bottom-link, .service-action,
+.settings-menu button.selected svg { color: var(--brand-action); }
+.button.primary { background: var(--brand-action); border-color: var(--brand-action); color: #fff; }
+.button.primary:hover { background: #785a2c; border-color: #785a2c; }
+.hero-card { background: linear-gradient(118deg, #625d55, #786d5b 58%, #9c875e); }
+.hero-pattern:before, .hero-pattern:after { border-color: rgb(243 218 138 / 14%); box-shadow: 0 0 0 26px rgb(243 218 138 / 4%), 0 0 0 54px rgb(243 218 138 / 3%); }
+.hero-pattern:after { background: #e2c577; opacity: .12; }
+.hero-label, .hero-foot, .hero-copy > p { color: #f2e9d4; }
+.hero-mark {
+  background: rgb(243 218 138 / 20%);
+  border: 1px solid rgb(243 218 138 / 30%);
+  color: #ffe49e;
+  box-shadow: inset 0 1px rgb(255 255 255 / 12%);
+}
+.hero-mark svg { color: currentColor; stroke-width: 2.25; }
+.hero-chip { color: #f3ead7; }
+.hero-chip svg { color: #f3da8a; }
+.hero-actions > button { color: #f5f0e8; }
+.action-icon { color: #f5f0e8; }
+.action-icon.inverse { color: #785a2c; }
+.action-icon.inverse { background: var(--brand-gold-light); border-color: #e8d59d; }
+.tip-banner { background: #faf7f3; border-color: var(--brand-border); }
+.tip-icon, .round-icon, .intro-icon, .report-icon { color: var(--brand-action); background: var(--brand-surface-soft); }
+.tip-banner > button, .app-footer svg { color: var(--brand-action); }
+.profile-avatar, .top-avatar, .clinic-avatar { color: var(--brand-action); background: var(--brand-surface-soft); }
+.tone-0 { background: #f2e7d2; color: #80622c; }
+.tone-4 { background: #ece7df; color: #6f675c; }
+.date-tile { background: #fbf8f3; border-color: var(--brand-border); }
+.date-tile > b, .due-info > b, .due-amount, .person > b, td b { color: var(--brand-ink); }
+.due-info > span, .due-info > small { color: var(--brand-taupe); }
+.app-footer {
+  color: var(--brand-taupe);
+  border-color: var(--brand-border);
+  background: linear-gradient(110deg, #f8f4ed, #fffdfa 72%);
+}
+.footer-trust strong, .footer-brand b { color: #5f574b; }
+.footer-icon { color: var(--brand-action); border-color: #e7ded2; background: #f4eee7; }
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline-color: var(--brand-gold);
+}
+
+/* Loading screen and mobile navigation follow the clinic's warm brand palette. */
+.auth-shell {
+  background:
+    radial-gradient(ellipse at 15% 5%, rgb(216 182 109 / 10%), transparent 34%),
+    radial-gradient(ellipse at 88% 90%, rgb(196 181 160 / 12%), transparent 36%),
+    var(--brand-ivory);
+}
+.auth-card { border-color: var(--brand-border); box-shadow: 0 24px 70px rgb(75 61 42 / 8%); }
+.auth-shield { background: var(--brand-surface-soft); color: var(--brand-action); }
+.auth-card h1 { color: var(--brand-ink); }
+.auth-card:has(.auth-loading) > p { color: var(--brand-taupe); }
+.auth-loading { background: #eee8df; }
+.auth-loading:after { background: linear-gradient(90deg, var(--brand-gold-deep), var(--brand-gold-light)); }
+
+.loading-screen {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: 48px 24px 70px;
+}
+.loading-screen:before,
+.loading-screen:after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  width: 360px;
+  height: 360px;
+  border: 24px solid rgb(216 182 109 / 9%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.loading-screen:before { top: -245px; left: -185px; }
+.loading-screen:after { right: -230px; bottom: -260px; }
+.loading-brand { display: flex; justify-content: center; }
+.loading-brand .brand-mark { gap: 13px; font-size: 28px; letter-spacing: -1px; }
+.loading-brand .brand-mark .leaf { width: 18px; height: 31px; }
+.loading-brand .brand-mark .leaf-two { width: 15px; height: 23px; margin-left: -21px; margin-top: 13px; }
+.loading-content { width: min(100%, 520px); text-align: center; }
+.loading-card {
+  overflow: hidden;
+  padding: 6px 20px;
+  border: 1px solid var(--brand-border);
+  border-radius: 24px;
+  background: var(--brand-surface);
+  box-shadow: 0 20px 60px rgb(75 61 42 / 8%);
+  text-align: left;
+}
+.loading-step {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 84px;
+  border-bottom: 1px solid var(--brand-border);
+  color: var(--brand-taupe);
+}
+.loading-step:last-child { border-bottom: 0; }
+.loading-step-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 54px;
+  height: 54px;
+  border-radius: 17px;
+  background: #f1eee9;
+  color: #938778;
+}
+.loading-step strong { flex: 1; color: var(--brand-ink); font-size: 15px; font-weight: 700; }
+.loading-step-status { display: grid; place-items: center; width: 22px; height: 22px; }
+.loading-step-status > i { width: 9px; height: 9px; border-radius: 50%; background: #ddd8d0; }
+.loading-step.is-active .loading-step-icon { background: #f4eee2; color: #9a753b; }
+.loading-spinner {
+  width: 21px;
+  height: 21px;
+  border: 3px solid #eadfc9;
+  border-top-color: #a98243;
+  border-right-color: #c5a15f;
+  border-radius: 50%;
+  animation: loading-spin .85s linear infinite;
+}
+.loading-content h1 { margin: 28px 0 5px; color: var(--brand-ink); font: 750 19px Manrope, sans-serif; letter-spacing: -.35px; }
+.loading-content > p { margin: 0; color: var(--brand-taupe); font-size: 13px; }
+.loading-content .auth-loading { height: 5px; margin: 23px 0 0; }
+.loading-foot {
+  position: absolute;
+  right: 20px;
+  bottom: max(20px, env(safe-area-inset-bottom));
+  left: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 9px;
+  color: var(--brand-taupe);
+  font-size: 11px;
+}
+.loading-foot svg { color: var(--brand-action); }
+@keyframes loading-spin { to { transform: rotate(360deg); } }
+
+.dashboard-priority,
+.dashboard-activity { margin-bottom: 15px; }
+.dashboard-priority .panel-head { align-items: center; }
+.dashboard-priority .due-item { padding: 12px 0; }
+.dashboard-priority .date-tile.is-overdue { background: #f8ece8; border-color: #ead2ca; }
+.dashboard-priority .date-tile.is-overdue > b { color: #9a5548; }
+.dashboard-empty {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 0 17px;
+  color: var(--brand-taupe);
+}
+.dashboard-empty .round-icon { width: 38px; height: 38px; }
+.dashboard-empty b { color: var(--brand-ink); font-size: 12px; }
+.dashboard-empty p { margin: 4px 0 0; color: var(--brand-taupe); font-size: 10px; }
+.dashboard-stats { margin-top: 2px; }
+
+html[data-theme="dark"] .dashboard-priority .date-tile.is-overdue { background: #3b2926; border-color: #65403a; }
+html[data-theme="dark"] .dashboard-priority .date-tile.is-overdue > b { color: #f0b3a5; }
+html[data-theme="dark"] .dashboard-empty .round-icon { background: #393226; color: #f3da8a; }
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-spinner, .loading-content .auth-loading:after { animation-duration: 3s; }
+}
+
+@media (max-width: 650px) {
+  .loading-screen { gap: 24px; padding: 35px 20px 78px; }
+  .loading-screen:before, .loading-screen:after { width: 260px; height: 260px; border-width: 18px; }
+  .loading-screen:before { top: -185px; left: -175px; }
+  .loading-screen:after { right: -180px; bottom: -195px; }
+  .loading-brand .brand-mark { gap: 11px; font-size: 25px; }
+  .loading-brand .brand-mark .leaf { width: 16px; height: 28px; }
+  .loading-brand .brand-mark .leaf-two { width: 14px; height: 21px; margin-left: -19px; margin-top: 12px; }
+  .loading-card { padding: 5px 14px; border-radius: 21px; }
+  .loading-step { gap: 13px; min-height: 74px; }
+  .loading-step-icon { width: 48px; height: 48px; border-radius: 15px; }
+  .loading-step strong { font-size: 13px; }
+  .loading-content h1 { margin-top: 23px; font-size: 17px; }
+  .loading-content > p { font-size: 12px; }
+  .loading-foot { font-size: 10px; }
+}
+  .mobile-nav {
+    background: rgb(255 253 250 / 96%);
+    border-color: rgb(231 222 210 / 96%);
+    box-shadow: 0 9px 28px rgb(75 61 42 / 14%);
+  }
+  .mobile-nav > button { color: #9b9388; }
+  .mobile-nav > button.selected { color: var(--brand-action); }
+  .mobile-nav > button.selected:before { background: #f4eee7; }
+  .mobile-nav .mobile-add {
+    background: var(--brand-gold);
+    border-color: var(--brand-ivory);
+    color: #38342f;
+    box-shadow: 0 5px 14px rgb(143 110 54 / 24%);
+  }
+  .mobile-more-menu {
+    background: rgb(255 253 250 / 98%);
+    border-color: var(--brand-border);
+    box-shadow: 0 14px 36px rgb(75 61 42 / 18%);
+  }
+  .mobile-more-menu button { color: var(--brand-ink); }
+  .mobile-more-menu button:active { background: var(--brand-surface-soft); }
+  .mobile-more-menu button > svg { color: var(--brand-taupe); }
+}
+
+html[data-theme="dark"] .auth-shell {
+  background:
+    radial-gradient(ellipse at 15% 5%, rgb(216 182 109 / 9%), transparent 34%),
+    radial-gradient(ellipse at 88% 90%, rgb(196 181 160 / 6%), transparent 36%),
+    #191715;
+}
+html[data-theme="dark"] .auth-card {
+  background: #24211e;
+  border-color: #494239;
+  box-shadow: 0 24px 70px rgb(0 0 0 / 28%);
+}
+html[data-theme="dark"] .auth-card h1 { color: #f5f0e8; }
+html[data-theme="dark"] .auth-card:has(.auth-loading) > p { color: #c1b9ae; }
+html[data-theme="dark"] .auth-loading { background: #494239; }
+html[data-theme="dark"] .auth-loading:after { background: linear-gradient(90deg, #c7a05b, #f3da8a); }
+html[data-theme="dark"] .mobile-nav {
+  background: rgb(36 33 30 / 96%) !important;
+  border-color: #494239 !important;
+  box-shadow: 0 9px 28px rgb(0 0 0 / 34%) !important;
+}
+html[data-theme="dark"] .mobile-nav > button { color: #a99f91 !important; }
+html[data-theme="dark"] .mobile-nav > button.selected { color: #f3da8a !important; }
+html[data-theme="dark"] .mobile-nav > button.selected:before { background: #393226 !important; }
+html[data-theme="dark"] .mobile-nav .mobile-add {
+  background: #e2c577 !important;
+  border-color: #191715 !important;
+  color: #2c251a !important;
+  box-shadow: 0 5px 14px rgb(0 0 0 / 28%) !important;
+}
+html[data-theme="dark"] .mobile-more-menu {
+  background: rgb(36 33 30 / 98%) !important;
+  border-color: #494239 !important;
+  box-shadow: 0 14px 36px rgb(0 0 0 / 42%) !important;
+}
+html[data-theme="dark"] .mobile-more-menu button { color: #f5f0e8 !important; }
+html[data-theme="dark"] .mobile-more-menu button:active { background: #393226 !important; }
+html[data-theme="dark"] .mobile-more-menu button > svg { color: #c1b9ae !important; }
+
+html[data-theme="dark"] {
+  --brand-ivory: #191715;
+  --brand-surface: #24211e;
+  --brand-surface-soft: #302b24;
+  --brand-gold: #e2c577;
+  --brand-gold-light: #f3da8a;
+  --brand-action: #f3da8a;
+  --brand-taupe: #c1b9ae;
+  --brand-ink: #f5f0e8;
+  --brand-border: #494239;
+  color-scheme: dark;
+}
+
+html[data-theme="dark"] body,
+html[data-theme="dark"] body .app-shell,
+html[data-theme="dark"] body .app-shell .main-area,
+html[data-theme="dark"] body .app-shell .page-wrap { background: #191715 !important; color: #f5f0e8 !important; }
+html[data-theme="dark"] body .app-shell .sidebar,
+html[data-theme="dark"] body .app-shell .topbar,
+html[data-theme="dark"] body .app-shell .panel,
+html[data-theme="dark"] body .app-shell .stat-card,
+html[data-theme="dark"] body .app-shell .service-card,
+html[data-theme="dark"] body .app-shell .settings-panel,
+html[data-theme="dark"] body .app-shell .settings-menu,
+html[data-theme="dark"] body .app-shell .modal,
+html[data-theme="dark"] body .app-shell .section-intro,
+html[data-theme="dark"] body .app-shell .report-heading,
+html[data-theme="dark"] body .app-shell .clinic-switch,
+html[data-theme="dark"] body .app-shell .help-card,
+html[data-theme="dark"] body .app-shell .table-wrap,
+html[data-theme="dark"] body .app-shell .due-item,
+html[data-theme="dark"] body .app-shell .tip-banner {
+  background-color: #24211e !important;
+  color: #f5f0e8 !important;
+  border-color: #494239 !important;
+}
+html[data-theme="dark"] body .app-shell .app-footer {
+  background: linear-gradient(110deg, #24211e, #2c2822 72%) !important;
+  color: #c1b9ae !important;
+  border-color: #494239 !important;
+}
+html[data-theme="dark"] body .app-shell .footer-trust strong,
+html[data-theme="dark"] body .app-shell .footer-brand b { color: #e7ddca !important; }
+html[data-theme="dark"] body .app-shell .footer-icon,
+html[data-theme="dark"] body .app-shell .help-icon,
+html[data-theme="dark"] body .app-shell .clinic-avatar {
+  background: #393226 !important;
+  border-color: #594a2f !important;
+  color: #f3da8a !important;
+}
+html[data-theme="dark"] body .app-shell .help-card { background: #24211e !important; border-color: #494239 !important; }
+html[data-theme="dark"] body .app-shell .help-card > button { color: #f3da8a !important; }
+html[data-theme="dark"] body .app-shell .nav-link { color: #c1b9ae; }
+html[data-theme="dark"] body .app-shell .nav-link svg,
+html[data-theme="dark"] body .app-shell .profile > svg { color: #a99f91 !important; }
+html[data-theme="dark"] body .app-shell .nav-group > p { color: #a99f91 !important; }
+html[data-theme="dark"] body .app-shell :is(h1,h2,h3,h4,p,label,span,b,strong,td,th,button,dt,dd,li,legend,summary) {
+  color: #f5f0e8 !important;
+}
+html[data-theme="dark"] body .app-shell :is(.muted,small,.eyebrow,.cell-sub,.stat-label,.panel-head p,.listing-panel > p,.table-foot,.app-footer) {
+  color: #c1b9ae !important;
+}
+html[data-theme="dark"] body .app-shell .brand-mark { color: #f5f0e8 !important; }
+html[data-theme="dark"] body .app-shell .brand-mark .leaf { background: linear-gradient(145deg, #c7a05b, #f3da8a) !important; }
+html[data-theme="dark"] body .app-shell .brand-mark .leaf-two { background: #f3da8a !important; border-color: #24211e !important; }
+html[data-theme="dark"] body .app-shell .nav-link.active,
+html[data-theme="dark"] body .app-shell .settings-menu button.selected { color: #f3da8a !important; background: #393226 !important; }
+html[data-theme="dark"] body .app-shell .nav-link.active svg,
+html[data-theme="dark"] body .app-shell .text-link,
+html[data-theme="dark"] body .app-shell .panel-bottom-link,
+html[data-theme="dark"] body .app-shell .service-action,
+html[data-theme="dark"] body .app-shell .tip-banner > button { color: #f3da8a !important; }
+html[data-theme="dark"] body .app-shell .button.primary { background: #e2c577 !important; border-color: #e2c577 !important; color: #2c251a !important; }
+html[data-theme="dark"] body .app-shell .button.secondary,
+html[data-theme="dark"] body .app-shell .button.subtle,
+html[data-theme="dark"] body .app-shell .icon-button,
+html[data-theme="dark"] body .app-shell .theme-toggle,
+html[data-theme="dark"] body .app-shell .row-action,
+html[data-theme="dark"] body .app-shell .mobile-nav,
+html[data-theme="dark"] body .app-shell .mobile-more-menu {
+  background: #302b24 !important;
+  color: #f5f0e8 !important;
+  border-color: #494239 !important;
+}
+html[data-theme="dark"] body .app-shell input,
+html[data-theme="dark"] body .app-shell select,
+html[data-theme="dark"] body .app-shell textarea {
+  background: #191715 !important;
+  color: #f5f0e8 !important;
+  border-color: #494239 !important;
+}
+html[data-theme="dark"] body .app-shell input::placeholder,
+html[data-theme="dark"] body .app-shell textarea::placeholder { color: #a99f91 !important; }
+html[data-theme="dark"] body .app-shell .hero-card { background: linear-gradient(118deg, #302d29, #484238 58%, #62543a) !important; }
+html[data-theme="dark"] body .app-shell .hero-label,
+html[data-theme="dark"] body .app-shell .hero-foot,
+html[data-theme="dark"] body .app-shell .hero-copy > p { color: #e7ddca !important; }
+html[data-theme="dark"] body .app-shell .hero-pattern:before,
+html[data-theme="dark"] body .app-shell .hero-pattern:after { border-color: rgb(243 218 138 / 14%); }
+html[data-theme="dark"] body .app-shell .hero-pattern:after { background: #e2c577 !important; }
+html[data-theme="dark"] body .app-shell .hero-chip { color: #f3e8cc !important; }
+html[data-theme="dark"] body .app-shell .hero-mark,
+html[data-theme="dark"] body .app-shell .action-icon { background: #4b3f2c !important; border-color: #74633d !important; color: #f3da8a !important; }
+html[data-theme="dark"] body .app-shell .hero-mark { background: #55472e !important; border-color: #8c7442 !important; color: #ffe49e !important; }
+html[data-theme="dark"] body .app-shell .hero-mark svg { color: #ffe49e !important; stroke: #ffe49e !important; stroke-width: 2.25; }
+html[data-theme="dark"] body .app-shell .badge.success { background: #393226 !important; border-color: #594a2f !important; color: #f3da8a !important; }
+html[data-theme="dark"] body .app-shell .badge.success i { background: #d2b25f !important; }
+html[data-theme="dark"] body .app-shell .badge.warning { background: #393226 !important; border-color: #5a4b2d !important; color: #f3da8a !important; }
+html[data-theme="dark"] body .app-shell .badge.danger { background: #3b2926 !important; border-color: #65403a !important; color: #f0b3a5 !important; }
+html[data-theme="dark"] body .app-shell .amount-positive,
+html[data-theme="dark"] body .app-shell .service-price { color: #f3da8a !important; }
+html[data-theme="dark"] body .app-shell .date-tile { background: #191715 !important; border-color: #494239 !important; }
+html[data-theme="dark"] body .app-shell .date-tile > b,
+html[data-theme="dark"] body .app-shell .due-info > b,
+html[data-theme="dark"] body .app-shell .due-amount,
+html[data-theme="dark"] body .app-shell .person > b,
+html[data-theme="dark"] body .app-shell td b { color: #f5f0e8 !important; }
+html[data-theme="dark"] body .app-shell .tone-0 { background: #393226 !important; color: #f3da8a !important; }
+html[data-theme="dark"] body .app-shell .tone-4 { background: #34312d !important; color: #e7ddca !important; }
+html[data-theme="dark"] body .app-shell .donut { background: radial-gradient(#24211e 54%, transparent 56%), conic-gradient(#d8b66d 0 48%, #f3da8a 48% 76%, #c7a05b 76% 90%, #494239 90%) !important; }
+
+/* Normalize semantic success and form controls to the clinic's warm palette. */
+:root:not([data-theme="dark"]) {
+  --success-bg: #f2ead8;
+  --success-ink: #806125;
+  --success-border: #e7ddca;
+}
+.app-shell :is(.badge.success, .badge.neutral, .connected-pill, .demo-pill.connected-pill,
+  .secure-label, .service-tone-0, [class*="service-tone-"], .service-overview-icon,
+  .service-icon, .nav-count, .key-balance, .amount-positive) {
+  --success-bg: #f2ead8;
+  --success-ink: #806125;
+  --success-border: #e7ddca;
+}
+.app-shell :is(.badge.success, .badge.neutral, .connected-pill, .demo-pill.connected-pill,
+  .service-tone-0, [class*="service-tone-"], .service-icon, .nav-count) {
+  background-color: var(--success-bg) !important;
+  border-color: var(--success-border) !important;
+  color: var(--success-ink) !important;
+}
+.app-shell .secure-label i,
+.app-shell .demo-pill i,
+.app-shell .connected-pill i,
+.app-shell .notification > i,
+.app-shell .badge.success i { background-color: var(--brand-gold-deep) !important; }
+.app-shell :is(.service-overview-icon, .service-icon) svg,
+.app-shell .badge.success svg,
+.app-shell .badge.neutral svg { color: var(--success-ink) !important; stroke: currentColor !important; }
+.app-shell :is(.key-balance, .amount-positive, .service-price, .service-overview-stat strong) {
+  color: var(--brand-action) !important;
+}
+.app-shell :is(input, select, textarea, .disabled-select, .select-lite, .filter-control) {
+  background-color: #fffdfa;
+  color: var(--brand-ink);
+  border-color: var(--brand-border);
+}
+.app-shell :is(input, select, textarea):focus {
+  border-color: var(--brand-gold-deep);
+  box-shadow: 0 0 0 3px rgb(216 182 109 / 18%);
+}
+.app-shell :is(.notice-card, .settings-menu button.selected, .payment-allocation-row,
+  .plan-service-line, .team-member, .team-list, .mobile-table-card, .table-wrap,
+  .round-icon, .tip-icon, .intro-icon, .report-icon) { border-color: var(--brand-border); }
+.app-shell .round-icon,
+.app-shell .tip-icon,
+.app-shell .intro-icon,
+.app-shell .report-icon { color: var(--brand-action); background-color: var(--brand-surface-soft); }
+
+html[data-theme="dark"] {
+  --success-bg: #393226;
+  --success-ink: #f3da8a;
+  --success-border: #594a2f;
+}
+html[data-theme="dark"] body .app-shell :is(.badge.success, .badge.neutral, .connected-pill,
+  .demo-pill.connected-pill, .service-tone-0, [class*="service-tone-"], .service-icon, .nav-count) {
+  background-color: #393226 !important;
+  border-color: #594a2f !important;
+  color: #f3da8a !important;
+}
+html[data-theme="dark"] body .app-shell :is(.secure-label, .badge.success) { color: #f3da8a !important; }
+html[data-theme="dark"] body .app-shell .secure-label i,
+html[data-theme="dark"] body .app-shell .demo-pill i,
+html[data-theme="dark"] body .app-shell .connected-pill i,
+html[data-theme="dark"] body .app-shell .notification > i,
+html[data-theme="dark"] body .app-shell .badge.success i { background-color: #d8b66d !important; }
+html[data-theme="dark"] body .app-shell :is(.service-overview-icon, .service-icon) svg,
+html[data-theme="dark"] body .app-shell .badge.success svg,
+html[data-theme="dark"] body .app-shell .badge.neutral svg { color: #f3da8a !important; stroke: currentColor !important; }
+html[data-theme="dark"] body .app-shell :is(.key-balance, .amount-positive, .service-price, .service-overview-stat strong) {
+  color: #f3da8a !important;
+}
+html[data-theme="dark"] body .app-shell :is(input, select, textarea, .disabled-select, .select-lite, .filter-control) {
+  background-color: #191715 !important;
+  color: #f5f0e8 !important;
+  border-color: #494239 !important;
+}
+html[data-theme="dark"] body .app-shell :is(input, select, textarea)::placeholder { color: #c1b9ae !important; }
+html[data-theme="dark"] body .app-shell :is(input, select, textarea):focus {
+  border-color: #d8b66d !important;
+  box-shadow: 0 0 0 3px rgb(216 182 109 / 18%) !important;
+}
+html[data-theme="dark"] body .app-shell :is(.notice-card, .settings-menu button.selected,
+  .payment-allocation-row, .plan-service-line, .team-member, .team-list, .mobile-table-card,
+  .table-wrap, .round-icon, .tip-icon, .intro-icon, .report-icon) { border-color: #494239 !important; }
+html[data-theme="dark"] body .app-shell :is(.round-icon, .tip-icon, .intro-icon, .report-icon) {
+  color: #f3da8a !important;
+  background-color: #302b24 !important;
+}
+
+/* Complete palette pass for remaining legacy green text and component accents. */
+.app-shell :is(.breadcrumb b, .page-heading h1, .panel-head h2, .listing-panel h2,
+  .settings-title h2, .section-intro b, .report-heading b, .modal-head h2) { color: var(--brand-ink) !important; }
+.app-shell :is(.field, .field > span, .whatsapp-consent, .whatsapp-consent span,
+  .whatsapp-consent b, .table-wrap td, .table-wrap .person, .patient-row-info,
+  .progress-caption, .row-actions, .service-overview-note, .service-overview-stat p,
+  .form-note, .button.secondary, .theme-toggle) { color: var(--brand-taupe) !important; }
+.app-shell :is(.stat-card > strong, .stat-card strong, .service-overview-stat strong,
+  .key-balance, .amount-positive, .service-price) { color: var(--brand-action) !important; }
+.app-shell :is(.service-overview-icon, .service-icon, [class*="service-tone-"]) {
+  background-color: #f2ead8 !important;
+  border-color: #e7ddca !important;
+  color: #806125 !important;
+}
+.app-shell :is(.row-action-primary, .progress-track i) { background-color: var(--brand-gold-deep) !important; color: #fffdfa !important; }
+.app-shell .form-note svg { color: var(--brand-action) !important; stroke: currentColor !important; }
+.app-shell .whatsapp-consent input { accent-color: var(--brand-gold-deep); }
+.app-shell .eyebrow > span { color: var(--brand-gold-deep) !important; }
+.app-shell :is(.row-action, .row-action-primary) { border-color: var(--brand-border) !important; }
+.app-shell .row-action { color: var(--brand-taupe) !important; }
+.app-shell :is(.button.secondary, .button.subtle, .icon-button, .theme-toggle) { border-color: var(--brand-border) !important; }
+.app-shell .table-wrap td b { color: var(--brand-ink) !important; }
+.app-shell .footer-brand > span { color: var(--brand-taupe) !important; }
+.app-shell :is(.secure-label, .hero-copy > p button) { color: #f2e9d4 !important; }
+.app-shell .dashboard-empty b,
+.app-shell .mobile-table-card b,
+.app-shell .service-card h3,
+.app-shell .service-overview > b,
+.app-shell .notice-card b,
+.app-shell .stat-card b { color: var(--brand-ink) !important; }
+.app-shell .service-overview-note,
+.app-shell .service-overview-stat > span,
+.app-shell .notice-card > span { color: var(--brand-taupe) !important; }
+.app-shell .service-overview-heading b { color: var(--brand-ink) !important; }
+.app-shell .service-overview-note,
+.app-shell .audit-launcher { border-color: var(--brand-border) !important; }
+.app-shell .notice-card { background: #faf7f3 !important; border-color: var(--brand-border) !important; }
+.app-shell .notice-card > span { background: #f4eee7 !important; border-color: var(--brand-border) !important; }
+.app-shell .notice-card > span svg { color: var(--brand-action) !important; stroke: currentColor !important; }
+.app-shell .donut > strong { color: var(--brand-ink) !important; }
+.app-shell .dashboard-empty .round-icon { border-color: var(--brand-border) !important; }
+.app-shell .tip-banner b,
+.app-shell .table-foot b,
+.app-shell .legend b { color: var(--brand-ink) !important; }
+.app-shell .service-overview p,
+.app-shell .service-overview span { color: var(--brand-taupe) !important; }
+.app-shell .settings-actions svg { color: var(--brand-gold-deep) !important; stroke: currentColor !important; }
+.app-shell .plan-total-row { color: var(--brand-taupe) !important; border-color: var(--brand-border) !important; background: #f4eee7 !important; }
+.app-shell .plan-total-row b { color: var(--brand-action) !important; }
+html[data-theme="dark"] body .app-shell :is(.breadcrumb b, .page-heading h1, .panel-head h2,
+  .listing-panel h2, .settings-title h2, .section-intro b, .report-heading b, .modal-head h2) { color: #f5f0e8 !important; }
+html[data-theme="dark"] body .app-shell :is(.field, .field > span, .whatsapp-consent,
+  .whatsapp-consent span, .whatsapp-consent b, .table-wrap td, .table-wrap .person,
+  .patient-row-info, .progress-caption, .row-actions, .service-overview-note,
+  .service-overview-stat p, .form-note, .button.secondary, .theme-toggle) { color: #c1b9ae !important; }
+html[data-theme="dark"] body .app-shell :is(.stat-card > strong, .stat-card strong,
+  .service-overview-stat strong, .key-balance, .amount-positive, .service-price) { color: #f3da8a !important; }
+html[data-theme="dark"] body .app-shell :is(.service-overview-icon, .service-icon, [class*="service-tone-"]) {
+  background-color: #393226 !important;
+  border-color: #594a2f !important;
+  color: #f3da8a !important;
+}
+html[data-theme="dark"] body .app-shell :is(.row-action-primary, .progress-track i) { background-color: #c7a05b !important; color: #191715 !important; }
+html[data-theme="dark"] body .app-shell .form-note svg { color: #f3da8a !important; stroke: currentColor !important; }
+html[data-theme="dark"] body .app-shell .whatsapp-consent input { accent-color: #d8b66d !important; }
+html[data-theme="dark"] body .app-shell :is(.form-note, .settings-menu button, .settings-menu button.selected) { border-color: #494239 !important; }
+html[data-theme="dark"] body .app-shell :is(.secure-label, .hero-copy > p button) { color: #e7ddca !important; }
+html[data-theme="dark"] body .app-shell :is(.dashboard-empty b, .mobile-table-card b,
+  .service-card h3, .service-overview > b, .notice-card b, .stat-card b, .donut > strong) { color: #f5f0e8 !important; }
+html[data-theme="dark"] body .app-shell :is(.service-overview-note, .service-overview-stat > span,
+  .notice-card > span) { color: #c1b9ae !important; }
+html[data-theme="dark"] body .app-shell .service-overview-heading b { color: #f5f0e8 !important; }
+html[data-theme="dark"] body .app-shell .service-overview-note,
+html[data-theme="dark"] body .app-shell .audit-launcher { border-color: #494239 !important; }
+html[data-theme="dark"] body .app-shell .notice-card { background: #24211e !important; border-color: #494239 !important; color: #f5f0e8 !important; }
+html[data-theme="dark"] body .app-shell .notice-card > span { background: #393226 !important; border-color: #594a2f !important; }
+html[data-theme="dark"] body .app-shell .notice-card > span svg { color: #f3da8a !important; stroke: currentColor !important; }
+html[data-theme="dark"] body .app-shell .dashboard-empty .round-icon { border-color: #594a2f !important; }
+html[data-theme="dark"] body .app-shell :is(.tip-banner b,.table-foot b,.legend b) { color: #f5f0e8 !important; }
+html[data-theme="dark"] body .app-shell :is(.service-overview p,.service-overview span) { color: #c1b9ae !important; }
+html[data-theme="dark"] body .app-shell .settings-actions svg { color: #f3da8a !important; stroke: currentColor !important; }
+html[data-theme="dark"] body .app-shell .plan-total-row { color: #c1b9ae !important; border-color: #494239 !important; background: #302b24 !important; }
+html[data-theme="dark"] body .app-shell .plan-total-row b { color: #f3da8a !important; }
+
+@media print {
+  html, body, body .app-shell, body .app-shell .main-area,
+  body .app-shell .page-wrap, body .app-shell .overlay,
+  body .app-shell .modal { background: #fff !important; color: #38342f !important; }
+  html[data-theme="dark"] body,
+  html[data-theme="dark"] body .app-shell,
+  html[data-theme="dark"] body .app-shell .main-area,
+  html[data-theme="dark"] body .app-shell .page-wrap,
+  html[data-theme="dark"] body .app-shell .overlay,
+  html[data-theme="dark"] body .app-shell .modal,
+  html[data-theme="dark"] body .app-shell .panel,
+  html[data-theme="dark"] body .app-shell .stat-card,
+  html[data-theme="dark"] body .app-shell .statement-content,
+  html[data-theme="dark"] body .app-shell .statement-overview,
+  html[data-theme="dark"] body .app-shell .statement-section,
+  html[data-theme="dark"] body .app-shell .receipt-document,
+  html[data-theme="dark"] body .app-shell .receipt-details {
+    background: #fff !important;
+    color: #38342f !important;
+    border-color: #e7ded2 !important;
+  }
+  html[data-theme="dark"] body .app-shell :is(h1,h2,h3,h4,p,label,span,b,strong,td,th,button,dt,dd,li,small) { color: #38342f !important; }
+  html[data-theme="dark"] body .app-shell .statement-section h3 { color: #8f6e36 !important; }
+}
+/* Keep helper and WhatsApp surfaces in the warm clinic palette in light mode. */
+html[data-theme="light"] .app-shell :is(.form-note,.whatsapp-template-help,.whatsapp-preview,.whatsapp-consent) {
+  background: #f6f1e8 !important;
+  color: #655b4d !important;
+  border-color: #e8dcc8 !important;
+}
+html[data-theme="light"] .app-shell :is(.form-note,.whatsapp-template-help,.whatsapp-preview,.whatsapp-consent) :is(svg,strong,b,span) {
+  color: inherit;
+}
+html[data-theme="light"] .app-shell :is(.whatsapp-preview > span,.whatsapp-section-icon,.settings-menu button.active svg) {
+  color: #9a7433 !important;
+}
+html[data-theme="light"] .app-shell .whatsapp-consent input { accent-color: #b38a40 !important; }
+html[data-theme="light"] .app-shell :is(.whatsapp-template-help small,.whatsapp-consent small) { color: #817565 !important; }

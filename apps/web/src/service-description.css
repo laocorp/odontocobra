@@ -1,0 +1,32 @@
+.field textarea {
+  width: 100%;
+  min-height: 88px;
+  resize: vertical;
+  border: 1px solid var(--brand-border, #e7ded2);
+  border-radius: 9px;
+  background: var(--brand-surface, #fff);
+  color: var(--brand-ink, #38342f);
+  padding: 10px 11px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+.field textarea::placeholder {
+  color: var(--brand-taupe, #77746f);
+}
+
+.field textarea:focus {
+  outline: 2px solid rgb(199 160 91 / 24%);
+  border-color: var(--brand-gold-deep, #c7a05b);
+}
+
+@media (max-width: 650px) {
+  .field textarea { font-size: 16px; }
+}
+
+.service-card > .muted {
+  min-height: 28px;
+  line-height: 1.45;
+}

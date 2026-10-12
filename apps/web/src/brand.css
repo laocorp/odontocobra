@@ -1,0 +1,257 @@
+:root {
+  --green: #8f6e36;
+  --deep: #785a2c;
+  --ink: #38342f;
+  --muted: #77746f;
+  --line: #e7ded2;
+  --paper: #ffffff;
+  --mint: #f4eee7;
+  --shadow: 0 14px 36px rgba(69, 57, 34, .07);
+  color: #38342f;
+  background: #faf7f3;
+}
+
+body { background: #faf7f3; color: #38342f; }
+.sidebar, .topbar, .panel, .stat-card, .service-card, .settings-panel,
+.settings-menu, .modal { background-color: #fffdfa; }
+.sidebar, .topbar { border-color: #e9e3d9; }
+.brand-mark { color: #5b5852; }
+.brand-mark .leaf { background: #c9a54f; }
+.brand-mark .leaf-two { background: #e0c87f; border-color: #fffdfa; }
+.nav-link.active { color: #876a2e; background: #f5efdf; }
+.nav-link.active svg, .text-link, .panel-bottom-link, .service-action,
+.button.subtle { color: #876a2e; }
+.button.primary { background: #8a6b2e; color: #fff; box-shadow: 0 5px 14px rgba(112, 82, 27, .16); }
+.button.primary:hover { background: #735824; }
+.hero-card { background: linear-gradient(118deg, #55524e, #716b60 58%, #8c7441); }
+.hero-pattern:after { background: #d9b957; }
+.hero-mark, .action-icon.inverse { color: #785d26; }
+.action-icon.inverse { background: #f4e7bd; border-color: #e8d59d; }
+.stat-icon.green { color: #806125; background: #f2e7c9; }
+.stat-icon.mint { color: #786d58; background: #f3eee4; }
+.amount-positive { color: #806125 !important; }
+.round-icon, .tip-icon, .intro-icon, .report-icon { color: #806125; background: #f3ead4; }
+.tip-banner { background: #faf7f0; border-color: #ebe4d5; }
+.tip-banner > button { color: #806125; }
+.app-footer svg { color: #b4975b; }
+.profile-avatar, .top-avatar, .clinic-avatar { background: #f2ead8; color: #806125; }
+.badge.success { background: #f6f0df; border-color: #e9dfc6; color: #806125; }
+.badge.success i { background: #b4975b; }
+.progress-track i { background: #b4975b; }
+.service-tone-0 { color: #806125; background: #f2e7c9; }
+.service-tone-3 { color: #786d58; background: #f3eee4; }
+.service-price { color: #806125; }
+.settings-menu button.selected { background: #f5efdf; color: #806125; }
+.focus-visible, button:focus-visible, input:focus-visible, select:focus-visible,
+textarea:focus-visible { outline-color: #d5bd78; }
+.connected-pill { background: #f6f0df; border-color: #e9dfc6; color: #806125; }
+.connected-pill i { background: #b4975b; }
+.donut { background: radial-gradient(#fffdfa 54%, transparent 56%), conic-gradient(#b4975b 0 48%, #d8bd72 48% 76%, #ad8d55 76% 90%, #eee6d2 90%); }
+.green-dot { background: #b4975b; }
+
+/* Brand palette drawn from the clinic logo: warm ivory, champagne gold and taupe. */
+:root {
+  --brand-ivory: #faf7f3;
+  --brand-gold: #d8b66d;
+  --brand-gold-light: #f3da8a;
+  --brand-gold-deep: #c7a05b;
+  --brand-taupe: #77746f;
+  --brand-taupe-deep: #38342f;
+  --brand-border: #e7ded2;
+}
+
+.sidebar, .topbar, .panel, .stat-card, .service-card, .settings-panel,
+.settings-menu, .modal, .section-intro, .report-heading,
+.search-box, .filter-control, .select-lite {
+  border-color: var(--brand-border);
+}
+.brand-mark .leaf { background: linear-gradient(145deg, var(--brand-gold-deep), var(--brand-gold-light)); }
+.brand-mark .leaf-two { background: var(--brand-gold-light); border-color: #fff; }
+.page-heading h1, .panel-head h2, .listing-panel h2, .settings-title h2,
+.section-intro b, .report-heading b, .receipt-document > h2 { color: var(--brand-taupe-deep); }
+.muted, .eyebrow, .stat-label, .panel-head p, .listing-panel > p,
+.cell-sub, .table-foot, .app-footer { color: var(--brand-taupe); }
+.nav-link.active { color: #8f6e36; background: #f4eee7; }
+.nav-link.active svg, .text-link, .panel-bottom-link, .service-action,
+.button.subtle { color: #8f6e36; }
+.button.primary { background: #8f6e36; color: #fff; border-color: #8f6e36; }
+.button.primary:hover { background: #785a2c; border-color: #785a2c; }
+.hero-card { background: linear-gradient(118deg, #786038, #9a7b43 58%, #c7a05b); }
+.hero-pattern:after { background: var(--brand-gold-light); }
+.hero-mark, .action-icon.inverse { color: #785a2c; }
+.action-icon.inverse { background: #f3da8a; border-color: #e8d59d; }
+.round-icon, .tip-icon, .intro-icon, .report-icon { color: #8f6e36; background: #f4eee7; }
+.tip-banner { background: #faf7f3; border-color: var(--brand-border); }
+.tip-banner > button, .app-footer svg { color: #8f6e36; }
+.profile-avatar, .top-avatar, .clinic-avatar { background: #f4eee7; color: #8f6e36; }
+.focus-visible, button:focus-visible, input:focus-visible, select:focus-visible,
+textarea:focus-visible { outline-color: #d8b66d; }
+.connected-pill { background: #f4eee7; border-color: #e7ded2; color: #785a2c; }
+.connected-pill i { background: #c7a05b; }
+
+html[data-theme="dark"] {
+  --brand-ivory: #191715;
+  --brand-gold: #e2c577;
+  --brand-gold-light: #f3da8a;
+  --brand-gold-deep: #c7a05b;
+  --brand-taupe: #c1b9ae;
+  --brand-taupe-deep: #f5f0e8;
+  --brand-border: #494239;
+}
+html[data-theme="dark"] body .app-shell .sidebar,
+html[data-theme="dark"] body .app-shell .topbar,
+html[data-theme="dark"] body .app-shell .panel,
+html[data-theme="dark"] body .app-shell .stat-card,
+html[data-theme="dark"] body .app-shell .service-card,
+html[data-theme="dark"] body .app-shell .due-item,
+html[data-theme="dark"] body .app-shell .table-wrap,
+html[data-theme="dark"] body .app-shell .modal,
+html[data-theme="dark"] body .app-shell .clinic-switch,
+html[data-theme="dark"] body .app-shell .section-intro,
+html[data-theme="dark"] body .app-shell .report-heading,
+html[data-theme="dark"] body .app-shell .settings-menu,
+html[data-theme="dark"] body .app-shell .search-box,
+html[data-theme="dark"] body .app-shell .filter-control {
+  background-color: #24211e !important;
+  color: #f5f0e8 !important;
+  border-color: #494239 !important;
+}
+html[data-theme="dark"] body .app-shell :is(h1,h2,h3,h4,p,label,span,b,strong,td,th,button,dt,dd,li,legend,summary) {
+  color: #f5f0e8;
+}
+html[data-theme="dark"] body .app-shell :is(.muted,small,.eyebrow,.cell-sub,.stat-label,.panel-head p,.listing-panel > p,.table-foot,.app-footer) {
+  color: #c1b9ae !important;
+}
+html[data-theme="dark"] body .app-shell .brand-mark { color: #f5f0e8 !important; }
+html[data-theme="dark"] body .app-shell .brand-mark .leaf { background: linear-gradient(145deg, #c7a05b, #f3da8a) !important; }
+html[data-theme="dark"] body .app-shell .brand-mark .leaf-two { background: #f3da8a !important; border-color: #24211e !important; }
+html[data-theme="dark"] body .app-shell .nav-link.active,
+html[data-theme="dark"] body .app-shell .settings-menu button.selected { background: #393226 !important; color: #f3da8a !important; }
+html[data-theme="dark"] body .app-shell .nav-link.active svg,
+html[data-theme="dark"] body .app-shell .text-link,
+html[data-theme="dark"] body .app-shell .panel-bottom-link,
+html[data-theme="dark"] body .app-shell .service-action,
+html[data-theme="dark"] body .app-shell .tip-banner > button { color: #f3da8a !important; }
+html[data-theme="dark"] body .app-shell .button.primary { background: #e2c577 !important; color: #2c251a !important; }
+html[data-theme="dark"] body .app-shell .button.secondary,
+html[data-theme="dark"] body .app-shell .button.subtle,
+html[data-theme="dark"] body .app-shell .icon-button,
+html[data-theme="dark"] body .app-shell .theme-toggle,
+html[data-theme="dark"] body .app-shell .row-action,
+html[data-theme="dark"] body .app-shell .mobile-nav,
+html[data-theme="dark"] body .app-shell .mobile-more-menu {
+  background: #302b24 !important;
+  color: #f5f0e8 !important;
+  border-color: #494239 !important;
+}
+html[data-theme="dark"] body .app-shell input,
+html[data-theme="dark"] body .app-shell select,
+html[data-theme="dark"] body .app-shell textarea {
+  background: #191715 !important;
+  color: #f5f0e8 !important;
+  border-color: #494239 !important;
+}
+html[data-theme="dark"] body .app-shell input::placeholder,
+html[data-theme="dark"] body .app-shell textarea::placeholder { color: #a99f91 !important; }
+html[data-theme="dark"] body .app-shell .hero-card { background: linear-gradient(118deg, #302a20, #493b27 58%, #68502a) !important; }
+html[data-theme="dark"] body .app-shell .hero-mark,
+html[data-theme="dark"] body .app-shell .action-icon { background: #4b3f2c !important; border-color: #74633d !important; color: #f3da8a !important; }
+html[data-theme="dark"] body .app-shell .badge.success { background: #393226 !important; border-color: #594a2f !important; color: #f3da8a !important; }
+html[data-theme="dark"] body .app-shell .badge.success i { background: #d2b25f !important; }
+html[data-theme="dark"] body .app-shell .badge.warning { background: #393226 !important; border-color: #5a4b2d !important; color: #f3da8a !important; }
+html[data-theme="dark"] body .app-shell .badge.danger { background: #3b2926 !important; border-color: #65403a !important; color: #f0b3a5 !important; }
+html[data-theme="dark"] body .app-shell .amount-positive,
+html[data-theme="dark"] body .app-shell .service-price { color: #f3da8a !important; }
+html[data-theme="dark"] body .app-shell .tip-banner { background: #24211e !important; border-color: #494239 !important; }
+html[data-theme="dark"] body .app-shell .donut { background: radial-gradient(#24211e 54%, transparent 56%), conic-gradient(#d8b66d 0 48%, #f3da8a 48% 76%, #c7a05b 76% 90%, #494239 90%) !important; }
+
+@media print {
+  html, body, body .app-shell, body .app-shell .main-area,
+  body .app-shell .page-wrap, body .app-shell .overlay,
+  body .app-shell .modal { background: #fff !important; color: #38342f !important; }
+  body .app-shell :is(h1,h2,h3,h4,p,label,span,b,strong,td,th,button,dt,dd,li,small) { color: #38342f !important; }
+}
+
+html[data-theme="dark"] {
+  --green: #e2c577;
+  --deep: #d3b569;
+  --ink: #f5f0e8;
+  --muted: #c1b9ae;
+  --line: #494239;
+  --paper: #24211e;
+  --mint: #302b24;
+  --shadow: 0 14px 36px rgba(0, 0, 0, .25);
+  color-scheme: dark;
+  background: #191715;
+  color: #f5f0e8;
+}
+
+html[data-theme="dark"] body { background: #191715 !important; color: #f5f0e8 !important; }
+html[data-theme="dark"] body .app-shell { background: #191715 !important; color: #f5f0e8 !important; }
+html[data-theme="dark"] body .app-shell .sidebar,
+html[data-theme="dark"] body .app-shell .topbar,
+html[data-theme="dark"] body .app-shell .panel,
+html[data-theme="dark"] body .app-shell .stat-card,
+html[data-theme="dark"] body .app-shell .service-card,
+html[data-theme="dark"] body .app-shell .due-item,
+html[data-theme="dark"] body .app-shell .table-wrap,
+html[data-theme="dark"] body .app-shell .modal,
+html[data-theme="dark"] body .app-shell .clinic-switch,
+html[data-theme="dark"] body .app-shell .app-footer,
+html[data-theme="dark"] body .app-shell .statement-content,
+html[data-theme="dark"] body .app-shell .statement-overview,
+html[data-theme="dark"] body .app-shell .statement-section,
+html[data-theme="dark"] body .app-shell .receipt-document,
+html[data-theme="dark"] body .app-shell .receipt-patient,
+html[data-theme="dark"] body .app-shell .receipt-details { background-color: #24211e !important; color: #f5f0e8 !important; border-color: #494239 !important; }
+html[data-theme="dark"] body .app-shell .main-area,
+html[data-theme="dark"] body .app-shell .page-wrap { background: #191715 !important; color: #f5f0e8 !important; }
+html[data-theme="dark"] body .app-shell * { border-color: #494239 !important; }
+html[data-theme="dark"] body .app-shell .muted,
+html[data-theme="dark"] body .app-shell small,
+html[data-theme="dark"] body .app-shell .eyebrow,
+html[data-theme="dark"] body .app-shell .cell-sub { color: #c1b9ae !important; }
+html[data-theme="dark"] body .app-shell .brand-mark { color: #f5f0e8 !important; }
+html[data-theme="dark"] body .app-shell .brand-mark .leaf { background: #d2b25f !important; }
+html[data-theme="dark"] body .app-shell .brand-mark .leaf-two { background: #ead48e !important; border-color: #292724 !important; }
+html[data-theme="dark"] body .app-shell .nav-link.active,
+html[data-theme="dark"] body .app-shell .settings-menu button.selected { background: #39342a !important; color: #e1c777 !important; }
+html[data-theme="dark"] body .app-shell .nav-link.active svg,
+html[data-theme="dark"] body .app-shell .text-link,
+html[data-theme="dark"] body .app-shell .panel-bottom-link,
+html[data-theme="dark"] body .app-shell .service-action { color: #e1c777 !important; }
+html[data-theme="dark"] body .app-shell .button.primary { background: #e2c577 !important; color: #2c251a !important; border-color: #e2c577 !important; }
+html[data-theme="dark"] body .app-shell .button.secondary,
+html[data-theme="dark"] body .app-shell .button.subtle,
+html[data-theme="dark"] body .app-shell .icon-button,
+html[data-theme="dark"] body .app-shell .theme-toggle,
+html[data-theme="dark"] body .app-shell .row-action,
+html[data-theme="dark"] body .app-shell .mobile-nav,
+html[data-theme="dark"] body .app-shell .mobile-more-menu { background: #34312d !important; color: #f0ebe2 !important; border-color: #514c44 !important; }
+html[data-theme="dark"] body .app-shell input,
+html[data-theme="dark"] body .app-shell select,
+html[data-theme="dark"] body .app-shell textarea { background: #24211e !important; color: #f5f0e8 !important; border-color: #514c44 !important; }
+html[data-theme="dark"] body .app-shell .profile-avatar,
+html[data-theme="dark"] body .app-shell .top-avatar,
+html[data-theme="dark"] body .app-shell .clinic-avatar,
+html[data-theme="dark"] body .app-shell .person-avatar,
+html[data-theme="dark"] body .app-shell [class*="stat-icon"],
+html[data-theme="dark"] body .app-shell [class*="date-tile"] { background: #39342a !important; color: #e1c777 !important; }
+html[data-theme="dark"] body .app-shell .hero-card { background: linear-gradient(118deg, #302a20, #493b27 58%, #68502a) !important; }
+html[data-theme="dark"] body .app-shell .stat-icon.green,
+html[data-theme="dark"] body .app-shell .stat-icon.mint,
+html[data-theme="dark"] body .app-shell .round-icon,
+html[data-theme="dark"] body .app-shell .tip-icon,
+html[data-theme="dark"] body .app-shell .intro-icon,
+html[data-theme="dark"] body .app-shell .report-icon { background: #39342a !important; color: #e1c777 !important; }
+html[data-theme="dark"] body .app-shell .amount-positive,
+html[data-theme="dark"] body .app-shell .service-price { color: #e1c777 !important; }
+html[data-theme="dark"] body .app-shell .badge.success,
+html[data-theme="dark"] body .app-shell .connected-pill { background: #39342a !important; border-color: #554b37 !important; color: #e1c777 !important; }
+html[data-theme="dark"] body .app-shell .badge.success i,
+html[data-theme="dark"] body .app-shell .connected-pill i,
+html[data-theme="dark"] body .app-shell .progress-track i { background: #d2b25f !important; }
+html[data-theme="dark"] body .app-shell .tip-banner { background: #292724 !important; border-color: #49443c !important; }
+html[data-theme="dark"] body .app-shell .action-icon,
+html[data-theme="dark"] body .app-shell .hero-mark { background: #4b3f2c !important; border-color: #74633d !important; color: #f5e3ad !important; }
+html[data-theme="dark"] body .app-shell .donut { background: radial-gradient(#24211e 54%, transparent 56%), conic-gradient(#d8b66d 0 48%, #f3da8a 48% 76%, #c7a05b 76% 90%, #494239 90%) !important; }

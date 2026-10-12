@@ -1,0 +1,55 @@
+.team-invite {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 12px;
+  margin: 24px 0 10px;
+}
+
+.team-invite .button { min-height: 48px; }
+.team-panel > .form-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 8px 0 22px;
+  color: var(--muted, #71817c);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.team-panel > .form-note svg { flex: 0 0 auto; color: var(--green, #14745d); margin-top: 1px; }
+.team-list { border-top: 1px solid var(--line, #e7eeeb); }
+.team-member {
+  min-height: 76px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--line, #e7eeeb);
+}
+.team-member-avatar {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  color: var(--green, #14745d);
+  background: #e4f3ec;
+}
+.team-member-copy { display: grid; gap: 4px; min-width: 0; }
+.team-member-copy b {
+  overflow: hidden;
+  color: var(--ink, #163b32);
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.team-member-copy span, .team-member-date { color: var(--muted, #71817c); font-size: 12px; }
+.team-member-date { margin-left: auto; }
+.team-member-date .button { padding: 7px 10px; }
+
+@media (max-width: 620px) {
+  .team-invite { grid-template-columns: 1fr; }
+  .team-invite .button { width: 100%; justify-content: center; }
+  .team-member { align-items: flex-start; padding: 13px 0; }
+  .team-member-date { align-self: center; }
+}

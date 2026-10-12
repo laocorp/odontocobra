@@ -1,0 +1,87 @@
+.service-plan-picker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.service-plan-picker select {
+  flex: 1;
+  min-width: 0;
+}
+
+.plan-service-list {
+  display: grid;
+  gap: 10px;
+}
+
+.plan-service-line {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 230px);
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border: 1px solid #e5ece8;
+  border-radius: 14px;
+  background: #fbfdfc;
+}
+
+.plan-service-line > div:first-child {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.plan-service-line b {
+  overflow: hidden;
+  color: #183b32;
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.plan-service-line small {
+  color: #84928c;
+  font-size: 12px;
+}
+
+.plan-service-line .amount-input {
+  min-width: 0;
+}
+
+.plan-service-line .amount-input input {
+  min-width: 0;
+}
+
+.plan-service-line .text-link {
+  flex: 0 0 auto;
+  padding: 0 4px;
+  color: #8d4c46;
+  font-size: 12px;
+}
+
+.plan-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 2px 4px;
+  border-top: 1px solid #e9efec;
+  color: #687a72;
+  font-size: 14px;
+}
+
+.plan-total-row b {
+  color: #0f684d;
+  font-size: 19px;
+}
+
+@media (max-width: 560px) {
+  .plan-service-picker {
+    align-items: stretch;
+  }
+
+  .plan-service-line {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+    padding: 11px 12px;
+  }
+}

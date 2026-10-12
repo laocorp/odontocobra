@@ -1,0 +1,261 @@
+html[data-theme="dark"] .auth-shell {
+  background: #191715 !important;
+  color: #f5f0e8 !important;
+}
+
+html[data-theme="dark"] .auth-card {
+  background: #24211e !important;
+  color: #f5f0e8 !important;
+  border-color: #494239 !important;
+  box-shadow: 0 22px 60px rgb(0 0 0 / 28%) !important;
+}
+
+html[data-theme="dark"] .auth-card :is(h1, .auth-description, .auth-switch, .auth-privacy) {
+  color: #eee7dc !important;
+}
+
+html[data-theme="dark"] .auth-card .auth-kicker {
+  color: #e2c577 !important;
+}
+
+html[data-theme="dark"] .auth-card .auth-shield {
+  background: #393226 !important;
+  color: #f3da8a !important;
+}
+
+html[data-theme="dark"] .auth-card .form label {
+  color: #d1c7b8 !important;
+}
+
+html[data-theme="dark"] .auth-card .form input {
+  background: #191715 !important;
+  color: #f5f0e8 !important;
+  border-color: #494239 !important;
+  color-scheme: dark;
+}
+
+html[data-theme="dark"] .auth-card .form input::placeholder {
+  color: #a99f91 !important;
+  opacity: 1;
+}
+
+html[data-theme="dark"] .auth-card .form input:focus {
+  border-color: #d8b66d !important;
+  box-shadow: 0 0 0 3px rgb(216 182 109 / 18%) !important;
+}
+
+html[data-theme="dark"] .auth-card .auth-switch button {
+  color: #e2c577 !important;
+}
+
+html[data-theme="dark"] .auth-card .auth-submit {
+  background: #f3cf62 !important;
+  color: #2b2418 !important;
+  border-color: #f3cf62 !important;
+}
+
+html[data-theme="dark"] .auth-card .auth-submit svg {
+  color: #2b2418 !important;
+  stroke: currentColor !important;
+}
+
+html[data-theme="dark"] .auth-card .auth-submit:hover:not(:disabled) {
+  background: #ffe28a !important;
+  border-color: #ffe28a !important;
+}
+
+html[data-theme="dark"] .auth-card .auth-submit:disabled {
+  color: #51452f !important;
+  opacity: .78;
+}
+
+html[data-theme="dark"] .auth-card .auth-privacy {
+  border-color: #494239 !important;
+}
+
+html[data-theme="dark"] .auth-card .auth-privacy svg {
+  color: #e2c577 !important;
+  stroke: currentColor !important;
+}
+
+html[data-theme="dark"] .auth-card .auth-alert.success {
+  background: #393226 !important;
+  color: #f3da8a !important;
+  border-color: #594a2f !important;
+}
+
+html[data-theme="dark"] .auth-card .auth-alert.error {
+  background: #3b2926 !important;
+  color: #f2c6ba !important;
+  border-color: #65403a !important;
+}
+
+/* Light mode follows the clinic's warm gold and taupe identity as well. */
+html[data-theme="light"] .auth-shell {
+  background: #f8f5ef !important;
+  color: #38342f !important;
+}
+
+html[data-theme="light"] .auth-card {
+  background: #fffdfa !important;
+  color: #38342f !important;
+  border-color: #e7ddd0 !important;
+  box-shadow: 0 22px 60px rgb(80 61 33 / 10%) !important;
+}
+
+html[data-theme="light"] .auth-card :is(h1, .auth-description, .auth-switch, .auth-privacy) {
+  color: #51483d !important;
+}
+
+html[data-theme="light"] .auth-card .auth-kicker {
+  color: #8a6724 !important;
+}
+
+html[data-theme="light"] .auth-card .auth-shield {
+  background: #f3e8cd !important;
+  color: #785b23 !important;
+}
+
+html[data-theme="light"] .auth-card .form label {
+  color: #514638 !important;
+}
+
+html[data-theme="light"] .auth-card .form input {
+  background: #fffdfa !important;
+  color: #38342f !important;
+  border-color: #e2d8ca !important;
+  color-scheme: light;
+}
+
+html[data-theme="light"] .auth-card .form input::placeholder {
+  color: #7c7265 !important;
+  opacity: 1;
+}
+
+html[data-theme="light"] .auth-card .form input:focus {
+  border-color: #c69d43 !important;
+  box-shadow: 0 0 0 3px rgb(198 157 67 / 22%) !important;
+}
+
+html[data-theme="light"] .auth-card .auth-switch button {
+  color: #785b23 !important;
+}
+
+html[data-theme="light"] .auth-card .auth-submit {
+  background: #e9c768 !important;
+  color: #302411 !important;
+  border-color: #e9c768 !important;
+}
+
+html[data-theme="light"] .auth-card .auth-submit svg {
+  color: #302411 !important;
+  stroke: currentColor !important;
+}
+
+html[data-theme="light"] .auth-card .auth-submit:hover:not(:disabled) {
+  background: #f3d577 !important;
+  border-color: #f3d577 !important;
+}
+
+html[data-theme="light"] .auth-card .auth-submit:disabled {
+  color: #51452f !important;
+  opacity: .78;
+}
+
+html[data-theme="light"] .auth-card .auth-privacy {
+  border-color: #e7ddd0 !important;
+}
+
+html[data-theme="light"] .auth-card .auth-privacy svg {
+  color: #8a6724 !important;
+  stroke: currentColor !important;
+}
+
+html[data-theme="light"] .auth-card .auth-alert.success {
+  background: #f3e8cd !important;
+  color: #785b23 !important;
+  border-color: #e5d3a7 !important;
+}
+
+html[data-theme="light"] .auth-card .auth-alert.error {
+  background: #fbefeb !important;
+  color: #854d40 !important;
+  border-color: #e8c9c0 !important;
+}
+
+html[data-theme="light"] :is(button, input, select, textarea, a, [tabindex]):focus-visible {
+  outline: 3px solid #8a6724 !important;
+  outline-offset: 2px !important;
+}
+
+html[data-theme="dark"] :is(button, input, select, textarea, a, [tabindex]):focus-visible {
+  outline: 3px solid #f3cf62 !important;
+  outline-offset: 2px !important;
+}
+
+.auth-card .auth-switch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.auth-card .auth-switch button {
+  min-height: 32px;
+  padding: 6px 4px;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.whatsapp-template-input {
+  min-height: 128px !important;
+  padding: 12px !important;
+  font-size: 14px !important;
+  line-height: 1.55;
+}
+
+html[data-theme="light"] .app-shell .clinic-avatar.large svg {
+  color: #785b23 !important;
+  stroke: currentColor !important;
+}
+
+html[data-theme="light"] .app-shell .footer-brand {
+  color: #665d51 !important;
+  font-size: 12px !important;
+}
+
+html[data-theme="light"] .app-shell .whatsapp-template-help small {
+  color: #665d51 !important;
+  font-size: 12px !important;
+}
+
+html[data-theme="light"] .app-shell .whatsapp-preview span {
+  color: #785b23 !important;
+  font-size: 12px !important;
+}
+
+html[data-theme="dark"] .app-shell .clinic-avatar.large svg {
+  color: #f3da8a !important;
+  stroke: currentColor !important;
+}
+
+@media (max-width: 600px) {
+  .whatsapp-template-input {
+    font-size: 16px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}

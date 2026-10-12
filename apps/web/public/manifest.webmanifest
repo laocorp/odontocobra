@@ -1,0 +1,17 @@
+{
+  "name": "OdontoCuenta",
+  "short_name": "OdontoCuenta",
+  "description": "Control claro y sencillo de cobros odontológicos.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FBF8F3",
+  "theme_color": "#EAC45D",
+  "icons": [
+    {
+      "src": "/pwa-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
