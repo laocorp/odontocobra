@@ -428,8 +428,8 @@ function buildPlanDocument(data: PlanPdfData) {
 
   startPage()
   addSection('TRATAMIENTO Y CONCEPTOS')
-  addLine(data.treatment, true)
-  for (const item of data.items) addLine(item)
+  if (data.items.length) for (const item of data.items) addLine(item)
+  else addLine(data.treatment, true)
 
   addSection('CUOTAS PENDIENTES')
   if (data.installments.length) for (const installment of data.installments) addLine(installment)
@@ -439,13 +439,14 @@ function buildPlanDocument(data: PlanPdfData) {
   addSection('CONSTANCIA')
   addLine(!data.hasBalance
     ? 'A la fecha de emisión, este plan no presenta saldo pendiente.'
-    : `A la fecha de emisión, este plan registra un saldo pendiente de ${data.balance} por concepto de ${data.treatment}.`)
-  addLine('El estado “Por vencer” indica que el saldo aún no está vencido; “Vencido” señala cuotas con fecha de pago superada.')
-  addLine('Documento informativo basado en los registros del consultorio. No es factura fiscal ni sustituye el contrato o los recibos de pago.')
+    : `Al corte, existe un saldo pendiente de ${data.balance} por el tratamiento ${data.treatment}.`)
+  if (data.hasBalance) addLine('Un saldo pendiente no significa que todas sus cuotas estén vencidas.')
+  addLine('Documento informativo según los registros del consultorio; no es factura fiscal ni sustituye el contrato o los recibos.')
 
-  if (y < 150) newPage()
+  if (y < 92) newPage()
   y -= 24
-  rule(y + 10)
+  operators.push(`0.89 0.86 0.79 RG 68 ${y + 10} m 245 ${y + 10} l S`)
+  operators.push(`0.89 0.86 0.79 RG 354 ${y + 10} m 531 ${y + 10} l S`)
   text(68, y - 8, 8, 'Firma del paciente / fecha')
   text(354, y - 8, 8, 'Firma del consultorio')
   finishPage()

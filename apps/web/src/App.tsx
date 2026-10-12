@@ -1716,7 +1716,7 @@ function Plans({ plans, patients, installments, clinicName, clinicPhone, timezon
       hasBalance: balance > 0,
       status: plan.status,
       nextDue: plan.nextDue,
-      items: (plan.items ?? []).map(item => `${item.name} · ${item.category}${item.description ? ` · ${item.description}` : ''} · ${money(item.amount)}`),
+      items: (plan.items ?? []).map(item => [item.name, item.category, item.description && item.description !== item.name ? item.description : null, money(item.amount)].filter(Boolean).join(' · ')),
       installments: openPlanInstallments.map(item => `Cuota ${item.sequence} · vence ${formatDueDate(item.due_on)} · ${item.status === 'overdue' ? 'vencida' : 'pendiente'} · saldo ${money(item.balance_usd_cents / 100)}`),
     }
     downloadPlanPdf(data)
