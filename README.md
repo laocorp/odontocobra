@@ -28,16 +28,15 @@ Para crear el esquema en el proyecto cloud, enlaza Supabase CLI al `project-ref`
 
 ## Despliegue en Dokploy
 
-La web es una SPA de Vite y usa Supabase Cloud para autenticación y datos. En Dokploy crea una **Application** conectada a este repositorio y configura:
+La web es una SPA de Vite y usa Supabase Cloud para autenticación y datos. El `Dockerfile` construye la app con Node 22 y pnpm 11 instalados directamente, sin el Corepack antiguo del builder Nixpacks; luego Nginx sirve los archivos y redirige rutas de la SPA a `index.html`. En Dokploy crea una **Application** conectada a este repositorio y configura:
 
-- Build type: **Nixpacks**.
+- Build type: **Dockerfile**.
 - Build path: raíz del repositorio (`/`).
-- Build command: `pnpm build`.
-- Publish directory: `apps/web/dist`.
-- Habilita el fallback de SPA para que las rutas de React Router abran directamente.
+- Dockerfile path: `Dockerfile`.
+- Docker context path: `.`.
 - Dominio: puerto de contenedor `80`; activa HTTPS en Dokploy.
 
-Define estas variables en la aplicación de Dokploy antes del build, porque Vite las inserta en los archivos estáticos:
+Define estas variables como **Build Time Arguments** en Dokploy antes del build, porque Vite las inserta en los archivos estáticos:
 
 | Variable | Valor |
 | --- | --- |
