@@ -14,18 +14,13 @@ RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-ARG VITE_SUPABASE_URL
-ARG VITE_SUPABASE_PUBLISHABLE_KEY
-
-RUN test -n "$VITE_SUPABASE_URL" \
-  && test -n "$VITE_SUPABASE_PUBLISHABLE_KEY" \
-  && VITE_SUPABASE_URL="$VITE_SUPABASE_URL" \
-     VITE_SUPABASE_PUBLISHABLE_KEY="$VITE_SUPABASE_PUBLISHABLE_KEY" \
-     pnpm build
+RUN pnpm build
 
 FROM nginx:stable-alpine AS runtime
 
 COPY deploy/nginx.conf /etc/nginx/conf.d/default.conf
+COPY deploy/40-runtime-config.sh /docker-entrypoint.d/40-runtime-config.sh
+RUN chmod +x /docker-entrypoint.d/40-runtime-config.sh
 COPY --from=build /app/apps/web/dist /usr/share/nginx/html
 
 EXPOSE 80

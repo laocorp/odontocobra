@@ -36,14 +36,14 @@ La web es una SPA de Vite y usa Supabase Cloud para autenticación y datos. El `
 - Docker context path: `.`.
 - Dominio: puerto de contenedor `80`; activa HTTPS en Dokploy.
 
-Define estas variables como **Build Time Arguments** en Dokploy antes del build, porque Vite las inserta en los archivos estáticos:
+Define estas variables en **Environment** de la aplicación Dokploy (entorno de ejecución del contenedor):
 
 | Variable | Valor |
 | --- | --- |
 | `VITE_SUPABASE_URL` | URL del proyecto Supabase de OdontoCuenta, por ejemplo `https://<project-ref>.supabase.co` |
 | `VITE_SUPABASE_PUBLISHABLE_KEY` | Clave publicable (`sb_publishable_...`) de ese mismo proyecto |
 
-Son valores públicos para el navegador. **No** agregues `SUPABASE_SERVICE_ROLE_KEY`, claves `secret`, ni credenciales de base de datos a Dokploy para esta SPA. Las funciones de Supabase reciben sus secretos de Supabase, no del contenedor web.
+Al iniciar el contenedor, Nginx genera `runtime-config.js` con estas variables y la app las lee antes de conectarse. No hace falta definir Build Time Arguments ni reconstruir la imagen cuando cambien. Son valores públicos para el navegador. **No** agregues `SUPABASE_SERVICE_ROLE_KEY`, claves `secret`, ni credenciales de base de datos a Dokploy para esta SPA. Las funciones de Supabase reciben sus secretos de Supabase, no del contenedor web.
 
 Antes de abrir la app en producción, en el proyecto de Supabase dedicado a OdontoCuenta:
 
@@ -52,7 +52,7 @@ Antes de abrir la app en producción, en el proyecto de Supabase dedicado a Odon
 3. En **Authentication → URL Configuration**, configura el dominio de producción como **Site URL** y agrégalo a **Redirect URLs**.
 4. Verifica el inicio de sesión, registro, invitaciones, registro de pagos y carga de la tasa antes de usar la app.
 
-Al hacer push a la rama configurada en Dokploy, conecta el despliegue automático por webhook o vuelve a desplegar desde la aplicación. La URL y la clave `VITE_` deben existir en el entorno de build para que una nueva compilación las incorpore. No reutilices un proyecto Supabase de otra aplicación.
+Al hacer push a la rama configurada en Dokploy, conecta el despliegue automático por webhook o vuelve a desplegar desde la aplicación. Si falta cualquiera de las variables de entorno, el contenedor se detiene con un mensaje claro. No reutilices un proyecto Supabase de otra aplicación.
 
 ## Tasa BCV
 

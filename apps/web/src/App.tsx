@@ -5,7 +5,7 @@ import './service-description.css'
 import { cloneElement, isValidElement, useCallback, useEffect, useMemo, useRef, useState, type Dispatch, type FormEvent, type ReactNode, type SetStateAction } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import { cloudConfigured, supabase } from './supabase'
-import { convertLocalMinorToUsdCents, convertUsdCentsToLocalMinor, localInputToMinor, sumPaymentAllocationCents, usdInputToCents, validatePaymentAllocationTotal } from '@odontocuenta/domain'
+import { cents, convertLocalMinorToUsdCents, convertUsdCentsToLocalMinor, localInputToMinor, sumPaymentAllocationCents, usdInputToCents, validatePaymentAllocationTotal } from '@odontocuenta/domain'
 import { downloadReceiptPdf, downloadStatementPdf, printReceiptDocument, printStatementPdf, type ReceiptPdfData, type StatementPdfData } from './receipt-pdf'
 import {
   Activity, ArrowDownLeft, ArrowDownRight, ArrowRight, Bell, BriefcaseMedical,
@@ -128,7 +128,7 @@ function paymentLocalMinor(payment: Payment) {
   if (currency === 'VES' && typeof payment.receivedLocalMinor === 'number') return payment.receivedLocalMinor
   if (currency === 'USD' && typeof payment.completedEquivalentLocalMinor === 'number') return payment.completedEquivalentLocalMinor
   if (!payment.exchangeRate || !(payment.rateSource === 'BCV' || payment.rateValidatedAt)) return null
-  try { return convertUsdCentsToLocalMinor(paymentUsdCents(payment), String(payment.exchangeRate), payment.localPrecision ?? 2) } catch { return null }
+  try { return convertUsdCentsToLocalMinor(cents(paymentUsdCents(payment)), String(payment.exchangeRate), payment.localPrecision ?? 2) } catch { return null }
 }
 function formatLocalMinor(minor: number, precision = 2) {
   return `Bs. ${new Intl.NumberFormat('es-VE', { minimumFractionDigits: precision, maximumFractionDigits: precision }).format(minor / (10 ** precision))}`
@@ -457,7 +457,7 @@ export function App() {
       }))
       setClinicLoadError('')
       setClinicLookupDone(true)
-    })().catch(cause => {
+    })().catch(() => {
       if (!alive) return
       setClinicLoadError('No pudimos conectarnos con Supabase. Revisa tu conexión y vuelve a cargar.')
       setClinicLookupDone(true)
@@ -500,7 +500,7 @@ export function App() {
       const count = Number(data?.confirmed_payment_count)
       setMonthlyCollectedUsdCents(Number.isFinite(cents) && cents >= 0 ? cents : null)
       setMonthlyConfirmedPaymentCount(Number.isSafeInteger(count) && count >= 0 ? count : null)
-    }).catch(() => { if (alive) { setMonthlyCollectedUsdCents(null); setMonthlyConfirmedPaymentCount(null) } })
+    }, () => { if (alive) { setMonthlyCollectedUsdCents(null); setMonthlyConfirmedPaymentCount(null) } })
     return () => { alive = false }
   }, [clinicId, payments])
 
@@ -509,8 +509,9 @@ export function App() {
     const pending = payments.filter(payment => (payment.status === 'Confirmado' || payment.status === 'Revertido') && (payment.receivedCurrency ?? payment.currency) === 'USD' && !payment.exchangeRate)
     if (!pending.length) return
     let alive = true
+    const client = supabase
     void Promise.all(pending.map(async payment => {
-      const { data, error } = await supabase.rpc('complete_pending_payment_receipt_rate', { p_clinic_id: clinicId, p_payment_id: String(payment.id) })
+      const { data, error } = await client.rpc('complete_pending_payment_receipt_rate', { p_clinic_id: clinicId, p_payment_id: String(payment.id) })
       if (error || !data?.exchange_rate) return null
       return { id: payment.id, exchangeRate: String(data.exchange_rate), rateSource: String(data.rate_source), rateAsOf: String(data.rate_as_of), rateValidatedAt: String(data.rate_validated_at), completedEquivalentLocalMinor: Number(data.equivalent_local_minor) }
     })).then(completions => {
@@ -1358,12 +1359,13 @@ function PatientStatement({ clinicName, clinicPhone, messageTemplate, patient, c
   useEffect(() => {
     if (!supabase || !clinicId) { setPatientPayments(fallbackPayments); return }
     let alive = true
+    const client = supabase
     setHistoryLoading(true)
     setHistoryError('')
     void (async () => {
       const rows: Array<{ id: string; patient_id: string; amount_usd_cents: number; received_currency: string; received_local_minor: number | null; exchange_rate: number | null; rate_source: string | null; rate_as_of: string | null; rate_validated_at: string | null; method: string; received_at: string; receipt_number: number | null; receipt_snapshot: Record<string, unknown> | null }> = []
       for (let offset = 0; ; offset += 500) {
-        const { data, error } = await supabase.from('payments').select('id, patient_id, amount_usd_cents, received_currency, received_local_minor, exchange_rate, rate_source, rate_as_of, rate_validated_at, method, received_at, receipt_number, receipt_snapshot').eq('clinic_id', clinicId).eq('patient_id', String(patient.id)).order('received_at', { ascending: false }).range(offset, offset + 499)
+        const { data, error } = await client.from('payments').select('id, patient_id, amount_usd_cents, received_currency, received_local_minor, exchange_rate, rate_source, rate_as_of, rate_validated_at, method, received_at, receipt_number, receipt_snapshot').eq('clinic_id', clinicId).eq('patient_id', String(patient.id)).order('received_at', { ascending: false }).range(offset, offset + 499)
         if (error) throw error
         rows.push(...(data ?? []))
         if (!data || data.length < 500) break
@@ -1371,7 +1373,7 @@ function PatientStatement({ clinicName, clinicPhone, messageTemplate, patient, c
       const ids = rows.map(row => row.id)
       const pendingRateRows = rows.filter(row => row.received_currency === 'USD' && row.exchange_rate == null)
       await Promise.all(pendingRateRows.map(async row => {
-        try { await supabase.rpc('complete_pending_payment_receipt_rate', { p_clinic_id: clinicId, p_payment_id: row.id }) } catch { /* Keep the statement available if rate completion is temporarily unavailable. */ }
+        try { await client.rpc('complete_pending_payment_receipt_rate', { p_clinic_id: clinicId, p_payment_id: row.id }) } catch { /* Keep the statement available if rate completion is temporarily unavailable. */ }
       }))
       let reversedIds = new Set<string>()
       let rateCompletions = new Map<string, { exchange_rate: number | string; rate_source: string; rate_as_of: string; rate_validated_at: string; equivalent_local_minor: number | string }>()
@@ -1640,7 +1642,7 @@ function downloadPaymentsCsv(payments: Payment[], timezone: string) {
       localEquivalent = (p.completedEquivalentLocalMinor / 10 ** localPrecision).toFixed(localPrecision)
     } else if (p.exchangeRate != null && p.rateAsOf) {
       try {
-        localEquivalent = (convertUsdCentsToLocalMinor(amountCents, String(p.exchangeRate), localPrecision) / 10 ** localPrecision).toFixed(localPrecision)
+        localEquivalent = (convertUsdCentsToLocalMinor(cents(amountCents), String(p.exchangeRate), localPrecision) / 10 ** localPrecision).toFixed(localPrecision)
       } catch { /* Keep the equivalent blank when its saved rate cannot be parsed. */ }
     }
     const rateDate = p.rateAsOf ? formatClinicDate(p.rateAsOf, timezone) : ''
