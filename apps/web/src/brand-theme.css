@@ -614,3 +614,32 @@ html[data-theme="light"] .app-shell :is(.whatsapp-preview > span,.whatsapp-secti
 }
 html[data-theme="light"] .app-shell .whatsapp-consent input { accent-color: #b38a40 !important; }
 html[data-theme="light"] .app-shell :is(.whatsapp-template-help small,.whatsapp-consent small) { color: #817565 !important; }
+
+/* Keep the connection state readable on compact headers and honest about its state. */
+.app-shell .demo-pill {
+  min-height: 32px;
+  padding: 6px 11px;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.app-shell .demo-pill i { flex: none; }
+.app-shell .demo-pill.connection-error {
+  background: #f6e9e3 !important;
+  border-color: #ead2c8 !important;
+  color: #854d3d !important;
+}
+.app-shell .demo-pill.connection-error i { background: #a75a47 !important; }
+@media (max-width: 650px) {
+  .app-shell .demo-pill { min-height: 34px; padding: 6px 9px; gap: 6px; font-size: 11px; }
+}
+@media (max-width: 375px) {
+  .app-shell .demo-pill { padding: 5px 7px; gap: 5px; font-size: 10px; }
+}
+html[data-theme="dark"] body .app-shell .demo-pill.connection-error {
+  background: #49352d !important;
+  border-color: #68483a !important;
+  color: #f0b9a4 !important;
+}
+html[data-theme="dark"] body .app-shell .demo-pill.connection-error i { background: #e7a18d !important; }
