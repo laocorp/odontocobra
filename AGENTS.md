@@ -23,3 +23,5 @@ Use concise imperative commit subjects with a type prefix, such as `feat: add pa
 ## Security & Configuration
 
 Never expose privileged Supabase `service_role` or secret keys in browser code. Enforce clinic membership and role checks in RLS, and keep credentials in ignored local environment configuration. `.env.example` may contain variable names and placeholders only. Use fictitious or anonymized patient data during development. This product stores contact and billing information, not clinical histories; do not submit or remove patient/payment records during UI checks.
+
+Patient portal access is one account for one patient only. Do not add family access, shared patient groups, or staff/patient account reuse unless the product owner explicitly changes that decision. If a patient email already belongs to staff, ask for a different portal email. Revoked portal access must block reads immediately in the database and close visible portal sessions automatically.

@@ -365,7 +365,6 @@ html[data-theme="dark"] .dashboard-empty .round-icon { background: #393226; colo
   .mobile-more-menu button { color: var(--brand-ink); }
   .mobile-more-menu button:active { background: var(--brand-surface-soft); }
   .mobile-more-menu button > svg { color: var(--brand-taupe); }
-}
 
 html[data-theme="dark"] .auth-shell {
   background:

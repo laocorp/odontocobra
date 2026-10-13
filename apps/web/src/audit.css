@@ -4,7 +4,7 @@
 
 .audit-launcher {
   position: static;
-  box-shadow: 0 10px 28px #173d3026;
+  box-shadow: 0 10px 28px rgb(75 61 42 / 15%);
 }
 
 .audit-launcher-row {
@@ -23,7 +23,7 @@
 }
 
 .audit-count {
-  color: #73847c;
+  color: #77746f;
   font-size: 12px;
   white-space: nowrap;
 }
@@ -37,7 +37,7 @@
   grid-template-columns: 36px minmax(0, 1fr);
   gap: 12px;
   padding: 16px 0;
-  border-top: 1px solid #e9efec;
+  border-top: 1px solid #e7ded2;
 }
 
 .audit-event-mark {
@@ -46,8 +46,8 @@
   height: 34px;
   place-items: center;
   border-radius: 50%;
-  background: #e8f4ed;
-  color: #147258;
+  background: #f4eee7;
+  color: #8f6e36;
 }
 
 .audit-event-content {
@@ -57,19 +57,19 @@
 }
 
 .audit-event-content b {
-  color: #183b32;
+  color: #38342f;
   font-size: 14px;
 }
 
 .audit-event-content p {
   overflow-wrap: anywhere;
   margin: 0;
-  color: #65766e;
+  color: #77746f;
   font-size: 13px;
 }
 
 .audit-event-content small {
-  color: #8a9691;
+  color: #9b9388;
   font-size: 11px;
 }
 

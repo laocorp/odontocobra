@@ -4,7 +4,8 @@ import './team.css'
 import './service-description.css'
 import { cloneElement, isValidElement, useCallback, useEffect, useMemo, useRef, useState, type Dispatch, type FormEvent, type ReactNode, type SetStateAction } from 'react'
 import type { Session } from '@supabase/supabase-js'
-import { cloudConfigured, supabase } from './supabase'
+import { cloudConfigured, patientPortalSupabase, supabase } from './supabase'
+import { PatientPortal, PatientPortalAccessCard, type PortalAccount } from './patient-portal/PatientPortal'
 import { cents, convertLocalMinorToUsdCents, convertUsdCentsToLocalMinor, localInputToMinor, sumPaymentAllocationCents, usdInputToCents, validatePaymentAllocationTotal } from '@odontocuenta/domain'
 import { downloadPlanPdf, downloadReceiptPdf, downloadStatementPdf, printReceiptDocument, printStatementPdf, type PlanPdfData, type ReceiptPdfData, type StatementPdfData } from './receipt-pdf'
 import {
@@ -23,6 +24,7 @@ type ServiceItem = { id: string | number; name: string; category: string; descri
 type PlanServiceLine = { serviceId: string; name: string; category?: string; description?: string; amount: string }
 type ExchangeRate = { id: string; rate: string; source: string; asOf: string; validatedAt: string }
 type AuditEvent = { id: number; actor_id: string; action: string; entity_type: string; entity_id: string | null; details: Record<string, unknown>; created_at: string }
+type PatientPortalAccess = { id: string; invited_email: string; status: 'invited' | 'active' | 'revoked'; invited_at: string | null }
 
 const DEFAULT_WHATSAPP_MESSAGE_TEMPLATE = 'Hola, {nombre}. Te escribimos de {clínica} para recordarte que tu cuota de {monto} correspondiente a {tratamiento} vence el {fecha}. Si ya realizaste el pago, puedes ignorar este mensaje. Si tienes alguna duda, responde por aquí o llámanos al {teléfono}. Si no deseas recibir recordatorios por WhatsApp, responde BAJA.'
 const renderWhatsAppMessage = (template: string, values: Record<string, string>) => template.replace(/\{([^{}]+)\}/g, (placeholder, key: string) => values[key] ?? placeholder)
@@ -234,6 +236,54 @@ function Modal({ title, subtitle, close, children }: { title: string; subtitle?:
 }
 
 export function App() {
+  if (typeof window !== 'undefined' && window.location.pathname.startsWith('/portal')) {
+    const portalSupabase = patientPortalSupabase
+    return <PatientPortal
+      activateAccess={async () => {
+        if (!portalSupabase) throw new Error('El portal no está configurado.')
+        const { data: sessionData, error: sessionError } = await portalSupabase.auth.getSession()
+        if (sessionError) throw sessionError
+        if (!sessionData.session) throw Object.assign(new Error('PORTAL_AUTH_REQUIRED'), { code: 'PORTAL_AUTH_REQUIRED' })
+        const { error } = await portalSupabase.rpc('activate_patient_portal_access')
+        if (error?.code === '42501') throw Object.assign(new Error('PORTAL_NO_ACCESS'), { code: 'PORTAL_NO_ACCESS' })
+        if (error) throw error
+      }}
+      loadAccount={async () => {
+        if (!portalSupabase) throw new Error('El portal no está configurado.')
+        const { data: sessionData, error: sessionError } = await portalSupabase.auth.getSession()
+        if (sessionError) throw sessionError
+        if (!sessionData.session) throw Object.assign(new Error('PORTAL_AUTH_REQUIRED'), { code: 'PORTAL_AUTH_REQUIRED' })
+        const { data, error } = await portalSupabase.rpc('get_patient_portal_account')
+        if (error) throw error
+        return data as PortalAccount
+      }}
+      isSessionActive={async () => {
+        if (!portalSupabase) throw new Error('El portal no está configurado.')
+        const { data: sessionData, error: sessionError } = await portalSupabase.auth.getSession()
+        if (sessionError) throw sessionError
+        if (!sessionData.session) throw Object.assign(new Error('PORTAL_AUTH_REQUIRED'), { code: 'PORTAL_AUTH_REQUIRED' })
+        const { data, error } = await portalSupabase.rpc('patient_portal_session_is_active')
+        if (error) throw error
+        return data === true
+      }}
+      requestLoginLink={async email => {
+        if (!portalSupabase) throw new Error('El portal no está configurado.')
+        const { error } = await portalSupabase.auth.signInWithOtp({
+          email,
+          options: { emailRedirectTo: `${window.location.origin}/portal`, shouldCreateUser: false },
+        })
+        if (error) throw error
+      }}
+      signOut={async () => {
+        if (portalSupabase) await portalSupabase.auth.signOut({ scope: 'local' })
+      }}
+      onExit={() => { window.location.assign('/') }}
+    />
+  }
+  return <ClinicApp />
+}
+
+function ClinicApp() {
   const [darkMode, setDarkMode] = useState(() => {
     try { return window.localStorage.getItem('odontocuenta-theme') === 'dark' } catch { return false }
   })
@@ -1352,13 +1402,13 @@ export function App() {
     {modal === 'patient' && <Modal title={editingPatient ? "Editar paciente" : "Nuevo paciente"} subtitle={editingPatient ? "Actualiza sus datos de contacto." : "Datos para identificarlo y llevar su cuenta."} close={closePatientModal}><form className="form" onSubmit={savePatient}><Field label="Nombre y apellidos"><input required autoFocus maxLength={160} placeholder="Ej. Laura García" value={patientName} onChange={e => setPatientName(e.target.value)} /></Field><Field label="Cédula de identidad"><input required maxLength={30} placeholder="Ej. V-12.345.678" value={patientNationalId} onChange={e => setPatientNationalId(e.target.value)} /></Field><Field label="Teléfono venezolano"><input required inputMode="tel" placeholder="+58 412 000 0000" value={patientPhone} onChange={e => setPatientPhone(e.target.value)} /></Field><Field label="Correo electrónico (opcional)"><input type="email" maxLength={254} value={patientEmail} onChange={e => setPatientEmail(e.target.value)} /></Field><Field label="Dirección (opcional)"><input maxLength={300} value={patientAddress} onChange={e => setPatientAddress(e.target.value)} /></Field><label className="whatsapp-consent"><input name="patient-whatsapp-consent" type="checkbox" checked={patientWhatsappConsent} onChange={e => setPatientWhatsappConsent(e.target.checked)} /><span><b>Acepta recibir recordatorios por WhatsApp</b><small>Actívalo solo después de que la persona haya dado su autorización explícita.</small></span></label><label className="whatsapp-consent"><input name="patient-email-reminder-consent" type="checkbox" checked={patientEmailReminderConsent} disabled={!patientEmail.trim()} onChange={e => setPatientEmailReminderConsent(e.target.checked)} /><span><b>Acepta recibir recordatorios de pago por correo</b><small>Actívalo solo después de que la persona haya autorizado estos correos. Se puede revocar desde este formulario.</small></span></label><div className="form-note"><ShieldCheck size={16} /> Solo guardamos información de contacto y cobro.</div><div className="modal-actions"><button type="button" className="button secondary" onClick={closePatientModal}>Cancelar</button><button className="button primary"><Check size={16} /> {editingPatient ? "Guardar cambios" : "Guardar paciente"}</button></div></form></Modal>}
     {modal === 'payment' && <Modal title="Registrar un abono" subtitle="Guarda el pago recibido y asígnalo a una o varias cuotas." close={() => setModal(null)}><form className="form" onSubmit={savePayment}><Field label="Paciente"><select required value={paymentPatient} onChange={e => { setPaymentPatient(e.target.value); setPaymentAllocations({}) }}><option value="">Selecciona un paciente</option>{patients.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</select></Field>{cloudConfigured && <Field label="Distribución por cuotas (USD)"><div className="payment-allocation-list">{!paymentPatient ? <div className="form-note">Selecciona un paciente para ver sus cuotas.</div> : installments.filter(item => item.patient_id === paymentPatient).length === 0 ? <div className="form-note">Este paciente no tiene cuotas pendientes para aplicar un pago.</div> : installments.filter(item => item.patient_id === paymentPatient).map(item => { const selected = Object.prototype.hasOwnProperty.call(paymentAllocations, item.id); return <div className={'payment-allocation-row ' + (selected ? 'selected' : '')} key={item.id}><input type="checkbox" aria-label={'Aplicar a cuota ' + item.sequence} checked={selected} onChange={e => setPaymentAllocations(current => { const next = { ...current }; if (e.target.checked) next[item.id] = ''; else delete next[item.id]; return next })} /><span><b>{item.description} · cuota {item.sequence}</b><small>{money(item.balance_usd_cents / 100)} pendiente</small></span>{selected && <input type="text" inputMode="decimal" placeholder="0,00" aria-label={'Monto aplicado a cuota ' + item.sequence + ' en USD'} value={paymentAllocations[item.id]} onChange={e => setPaymentAllocations(current => ({ ...current, [item.id]: e.target.value }))} />}</div>})}</div><p className="form-note"><ShieldCheck size={16} /> Selecciona una o varias cuotas e indica cuánto del pago en USD corresponde a cada una. Asignado {paymentAllocationTotalCents === null ? '—' : money(paymentAllocationTotalCents / 100)} de {paymentTotalUsdCents === null ? 'Pendiente' : money(paymentTotalUsdCents / 100)} USD.</p></Field>}<Field label="Moneda recibida"><select value={paymentCurrency} onChange={e => { setPaymentCurrency(e.target.value as 'USD' | 'VES'); setPaymentAmount('') }}><option value="USD">USD — Dólares</option>{cloudConfigured && <option value="VES" disabled={!currentExchangeRate}>{clinicLocalCurrency === 'VES' ? 'VES — Bolívares (Bs.)' : `${clinicLocalCurrency} — Moneda local`}{!currentExchangeRate ? ' · sin tasa vigente' : ''}</option>}</select></Field><Field label={paymentCurrency === 'VES' ? `Monto recibido (${clinicLocalCurrency === 'VES' ? 'Bs.' : clinicLocalCurrency})` : 'Monto recibido'}><div className="amount-input"><span>{paymentCurrency === 'VES' ? 'Bs.' : '$'}</span><input required type="text" inputMode="decimal" placeholder="0,00" value={paymentAmount} onChange={e => setPaymentAmount(e.target.value)} /><b>{paymentCurrency}</b></div></Field>{paymentCurrency === 'VES' && currentExchangeRate && <div className="form-note"><ShieldCheck size={16} /> Tasa {currentExchangeRate.source === 'BCV' ? 'BCV' : 'manual validada'}: {currentExchangeRate.rate} Bs./USD · vigente {formatClinicDate(currentExchangeRate.asOf, clinicTimezone)}{paymentUsdPreviewCents !== null && <> · Equivale a {money(paymentUsdPreviewCents / 100)} USD, monto a distribuir</>}</div>}<Field label="Nota o concepto"><input placeholder="Ej. Abono de hoy" value={paymentConcept} onChange={e => setPaymentConcept(e.target.value)} /></Field><Field label="Método de pago"><select value={paymentMethod} onChange={e => setPaymentMethod(e.target.value)}><option value="cash">Efectivo</option><option value="mobile_payment">Pago móvil</option><option value="bank_transfer">Transferencia</option><option value="card">Tarjeta</option><option value="other">Otro</option></select></Field><div className="form-note"><ShieldCheck size={16} /> El pago confirmado conserva su recibo; los errores se corrigen mediante una reversión auditada.</div><div className="modal-actions"><button type="button" className="button secondary" onClick={() => setModal(null)}>Cancelar</button><button className="button primary"><Check size={16} /> Guardar abono</button></div></form></Modal>}
     {modal === 'plan' && <Modal title="Crear plan de pago" subtitle="Elige uno o más servicios y acuerda las cuotas." close={() => { setModal(null); setPlanItems([]); setPlanServiceChoice('') }}><form className="form" onSubmit={savePlan}><Field label="Paciente"><select required value={planPatient} onChange={e => setPlanPatient(e.target.value)}><option value="">Selecciona un paciente</option>{patients.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</select></Field><Field label="Agregar servicio"><div className="service-plan-picker"><select value={planServiceChoice} onChange={e => setPlanServiceChoice(e.target.value)}><option value="">Selecciona del catálogo</option>{services.filter(service => !planItems.some(item => item.serviceId === String(service.id))).map(service => <option key={service.id} value={service.id}>{service.name} · {money(service.priceCents / 100)}</option>)}</select><button type="button" className="button secondary compact" onClick={addPlanService} disabled={!planServiceChoice}>Añadir</button></div></Field>{planItems.length > 0 ? <div className="plan-service-list">{planItems.map(item => <div className="plan-service-line" key={item.serviceId}><div><b>{item.name}</b><small>Precio acordado · USD</small></div><div className="amount-input"><span>$</span><input required type="text" inputMode="decimal" value={item.amount} onChange={e => setPlanItems(list => list.map(line => line.serviceId === item.serviceId ? { ...line, amount: e.target.value } : line))} aria-label={`Precio acordado de ${item.name}`} /><button type="button" className="text-link" aria-label={`Quitar ${item.name}`} onClick={() => setPlanItems(list => list.filter(line => line.serviceId !== item.serviceId))}>Quitar</button></div></div>)}</div> : <div className="form-note"><ShieldCheck size={16} /> Selecciona del catálogo al menos un servicio para continuar.</div>}<div className="plan-total-row"><span>Total acordado</span><b>{money(planItems.reduce((sum, item) => { try { return sum + usdInputToCents(item.amount) } catch { return sum } }, 0) / 100)}</b></div><div className="two-fields"><Field label="Cantidad de cuotas"><input type="number" required min="1" max="120" value={planInstallments} onChange={e => setPlanInstallments(e.target.value)} /></Field><Field label="Primera fecha de pago"><input type="date" required value={planFirstDue} onChange={e => setPlanFirstDue(e.target.value)} /></Field></div><div className="form-note"><ShieldCheck size={16} /> El total se conserva exacto y la última cuota absorbe cualquier centavo restante.</div><div className="modal-actions"><button type="button" className="button secondary" onClick={() => { setModal(null); setPlanItems([]); setPlanServiceChoice('') }}>Cancelar</button><button className="button primary" disabled={!planItems.length}><Check size={16} /> Crear plan</button></div></form></Modal>}
-    {statementPatient && <PatientStatement clinicName={clinicName} clinicPhone={clinicPhone} messageTemplate={whatsappMessageTemplate} clinicId={clinicId} patient={statementPatient} plans={plans} payments={localizedPayments} installments={installments} timezone={clinicTimezone} close={() => setStatementPatient(null)} />}
+    {statementPatient && <PatientStatement clinicName={clinicName} clinicPhone={clinicPhone} messageTemplate={whatsappMessageTemplate} clinicId={clinicId} canManagePortal={Boolean(supabase && clinicId && membershipRole === 'owner')} patient={statementPatient} plans={plans} payments={localizedPayments} installments={installments} timezone={clinicTimezone} close={() => setStatementPatient(null)} />}
     {receiptPayment && <ReceiptPreview clinicName={clinicName} timezone={clinicTimezone} payment={receiptPayment} close={() => setReceiptPayment(null)} />}
     {toast && <div className="toast"><Check size={16} /> {toast}</div>}
   </div>
 }
 
-function PatientStatement({ clinicName, clinicPhone, messageTemplate, patient, clinicId, plans, payments, installments, timezone, close }: { clinicName: string; clinicPhone: string; messageTemplate: string; patient: Patient; clinicId: string | null; plans: Plan[]; payments: Payment[]; installments: UnpaidInstallment[]; timezone: string; close: () => void }) {
+function PatientStatement({ clinicName, clinicPhone, messageTemplate, patient, clinicId, canManagePortal, plans, payments, installments, timezone, close }: { clinicName: string; clinicPhone: string; messageTemplate: string; patient: Patient; clinicId: string | null; canManagePortal: boolean; plans: Plan[]; payments: Payment[]; installments: UnpaidInstallment[]; timezone: string; close: () => void }) {
   const patientPlans = plans.filter(plan => String(plan.patientId ?? '') === String(patient.id))
   const openInstallments = installments.filter(item => String(item.patient_id) === String(patient.id))
   const fallbackPayments = payments.filter(payment => String(payment.patientId ?? '') === String(patient.id))
@@ -1366,8 +1416,68 @@ function PatientStatement({ clinicName, clinicPhone, messageTemplate, patient, c
   const patientPayments = patientPaymentRows.map(payment => payment.receivedAt ? { ...payment, date: formatClinicDateTime(payment.receivedAt, timezone) } : payment)
   const [historyLoading, setHistoryLoading] = useState(false)
   const [historyError, setHistoryError] = useState('')
+  const [portalAccess, setPortalAccess] = useState<PatientPortalAccess | null>(null)
+  const [portalStatusLoading, setPortalStatusLoading] = useState(false)
+  const [portalBusy, setPortalBusy] = useState(false)
+  const [portalError, setPortalError] = useState<string | null>(null)
   const total = patientPlans.reduce((sum, plan) => sum + plan.total, 0)
   const paid = patientPlans.reduce((sum, plan) => sum + plan.paid, 0)
+
+  const refreshPortalAccess = useCallback(async () => {
+    if (!supabase || !clinicId) { setPortalAccess(null); return }
+    const { data, error } = await supabase.from('patient_portal_access')
+      .select('id, invited_email, status, invited_at')
+      .eq('clinic_id', clinicId)
+      .eq('patient_id', String(patient.id))
+      .maybeSingle()
+    if (error) throw error
+    setPortalAccess(data as PatientPortalAccess | null)
+  }, [clinicId, patient.id])
+
+  useEffect(() => {
+    if (!canManagePortal) return
+    let alive = true
+    setPortalStatusLoading(true)
+    setPortalError(null)
+    void refreshPortalAccess().catch(() => {
+      if (alive) setPortalError('No se pudo consultar el acceso al portal.')
+    }).finally(() => { if (alive) setPortalStatusLoading(false) })
+    return () => { alive = false }
+  }, [canManagePortal, refreshPortalAccess])
+
+  const invitePatientPortal = async (email: string) => {
+    if (!supabase || !clinicId) throw new Error('El consultorio no está conectado.')
+    setPortalBusy(true)
+    setPortalError(null)
+    try {
+      const { data, error } = await supabase.functions.invoke('invite-patient-portal', { body: { clinic_id: clinicId, patient_id: String(patient.id), email } })
+      if (error) throw error
+      if (data?.error) throw new Error(data.error)
+      await refreshPortalAccess()
+      if (data?.warning) throw new Error(data.warning)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'No se pudo enviar la invitación.'
+      setPortalError(message)
+      throw new Error(message)
+    } finally { setPortalBusy(false) }
+  }
+
+  const revokePatientPortal = async () => {
+    if (!supabase || !clinicId || !portalAccess) throw new Error('No hay un acceso activo para revocar.')
+    if (!window.confirm(`¿Revocar el acceso al portal de ${patient.name}? Se cerrará su sesión en los dispositivos que tenga abiertos.`)) return
+    setPortalBusy(true)
+    setPortalError(null)
+    try {
+      const { data, error } = await supabase.functions.invoke('revoke-patient-portal', { body: { clinic_id: clinicId, access_id: portalAccess.id } })
+      if (error) throw error
+      if (data?.error) throw new Error(data.error)
+      await refreshPortalAccess()
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'No se pudo revocar el acceso.'
+      setPortalError(message)
+      throw new Error(message)
+    } finally { setPortalBusy(false) }
+  }
 
   useEffect(() => {
     if (!supabase || !clinicId) { setPatientPayments(fallbackPayments); return }
@@ -1499,6 +1609,16 @@ function PatientStatement({ clinicName, clinicPhone, messageTemplate, patient, c
         {historyLoading && <p className="muted">Cargando historial completo…</p>}
         {!historyLoading && patientPayments.length ? <div className="table-wrap"><table><thead><tr><th>FECHA</th><th>CONCEPTO</th><th>FORMA DE PAGO</th><th>RECIBIDO</th><th>EQUIVALENTE USD / Bs.</th><th>TASA</th></tr></thead><tbody>{patientPayments.map(payment => { const currency = payment.receivedCurrency ?? 'USD'; const verifiedRate = Boolean(payment.exchangeRate && (payment.rateSource === 'BCV' || payment.rateValidatedAt)); const bolivarMinor = paymentLocalMinor(payment); const rateDate = payment.rateAsOf ? formatClinicDate(payment.rateAsOf, timezone) : ''; return <tr key={payment.id}><td>{payment.date}</td><td>{payment.concept}</td><td>{payment.method}<small className="cell-sub">{payment.status}</small></td><td>{currency === 'VES' && typeof payment.receivedLocalMinor === 'number' ? formatLocalMinor(payment.receivedLocalMinor, payment.localPrecision ?? 2) : money(payment.amount) + ' USD'}</td><td>{payment.status === 'Revertido' ? '—' : `${money(payment.amount)} USD${bolivarMinor === null ? ' · Bs. pendiente' : ` · ${formatLocalMinor(bolivarMinor, payment.localPrecision ?? 2)}`}`}</td><td>{verifiedRate ? `${payment.rateSource === 'BCV' ? 'BCV' : 'Validada'} · ${payment.exchangeRate}${rateDate ? ` · ${rateDate}` : ''}` : 'Pendiente'}</td></tr> })}</tbody></table></div> : !historyLoading && <p className="muted">Todavía no hay abonos recientes.</p>}
       </section>
+      {canManagePortal && <PatientPortalAccessCard
+        patientName={patient.name}
+        patientEmail={portalAccess?.invited_email || patient.email}
+        status={portalAccess?.status ?? 'not_invited'}
+        invitedAt={portalAccess?.invited_at ?? undefined}
+        busy={portalBusy || portalStatusLoading}
+        error={portalError}
+        onInvite={invitePatientPortal}
+        onRevoke={revokePatientPortal}
+      />}
       <p className="form-note">Montos expresados en USD. El equivalente en Bs. se podrá mostrar cuando haya una tasa BCV verificada.</p>
       <div className="modal-actions"><button type="button" className="button secondary" onClick={() => exportStatement('print')}>Imprimir</button><button type="button" className="button secondary" onClick={exportStatementCsv} disabled={historyLoading || Boolean(historyError)}><Download size={16} /> CSV</button><button type="button" className="button primary" onClick={() => exportStatement('download')} disabled={historyLoading || Boolean(historyError)}><Download size={16} /> Descargar PDF</button><button className="button secondary" onClick={close}>Cerrar</button></div>
     </div>

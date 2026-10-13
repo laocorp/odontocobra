@@ -62,9 +62,23 @@ La persona propietaria administra invitaciones y revocaciones de asistentes desd
 
 Después de aplicar las migraciones, despliega las funciones en el proyecto enlazado con `pnpm exec supabase functions deploy bcv-rate` y `pnpm exec supabase functions deploy invite-clinic-member`. Supabase proporciona las claves de servidor a las funciones; no copies una clave `service_role` o `secret` a la configuración pública de la web.
 
+## Portal del paciente
+
+La persona propietaria puede invitar a un paciente desde **Pacientes → Ver cuenta**. Cada paciente tiene como máximo una cuenta individual y cada cuenta corresponde a un solo paciente; no hay acceso a familiares. La invitación usa por defecto el correo de contacto, pero permite indicar otro correo sin modificar la ficha. El correo del portal no puede pertenecer a una cuenta del equipo ni estar vinculado a otro paciente. El paciente entra con un enlace enviado por correo y solo puede consultar su saldo, planes, cuotas y recibos; el portal no permite registrar pagos ni editar datos.
+
+Para habilitar el portal en Supabase:
+
+1. Aplica las migraciones pendientes con `pnpm db:push`.
+2. Despliega `invite-patient-portal` y `revoke-patient-portal` con `pnpm exec supabase functions deploy invite-patient-portal` y `pnpm exec supabase functions deploy revoke-patient-portal`.
+3. Configura en **Authentication → URL Configuration** el dominio de la app como **Site URL** y permite `https://cobra.techost.cloud/portal` en **Redirect URLs**. En local, agrega `http://localhost:5173/portal`.
+4. Define el secreto de la función con `pnpm exec supabase secrets set PATIENT_PORTAL_REDIRECT_URL=https://cobra.techost.cloud/portal` (usa `http://localhost:5173/portal` para probar únicamente en Supabase local).
+5. Prueba con cuentas y pacientes ficticios: invitación, entrada por enlace, lectura de sus datos, rechazo de otro paciente y revocación.
+
+Al revocar, la base bloquea inmediatamente las consultas del portal y los navegadores abiertos comprueban el estado cada 12 segundos; al detectar la revocación, borran su sesión local y muestran el aviso de acceso cerrado. Las claves de servicio se mantienen exclusivamente en Edge Functions. El registro normal del consultorio y los flujos manuales de pagos siguen disponibles.
+
 ## Recordatorios de pago por correo
 
-El flujo de n8n **OdontoCuenta | Recordatorios de pago por correo** consulta diariamente las cuotas que vencen al día siguiente, a las 9:00 de `America/Caracas`. Solo considera pacientes con correo registrado, consentimiento de recordatorios por correo vigente y una cuota con saldo en un plan activo. El correo incluye monto y fecha, sin información del tratamiento. El consentimiento de correo es independiente del consentimiento para WhatsApp; el botón manual **Preparar WhatsApp** sigue disponible y no forma parte de esta automatización. El flujo de n8n queda inactivo hasta configurarlo y activarlo manualmente.
+El flujo de n8n **OdontoCuenta | Recordatorios de pago por correo** consulta diariamente las cuotas que vencen ese día, a las 9:00 de `America/Caracas`. Solo considera pacientes con correo registrado, consentimiento de recordatorios por correo vigente y una cuota con saldo en un plan activo. El correo incluye monto y fecha, sin información del tratamiento. El consentimiento de correo es independiente del consentimiento para WhatsApp; el botón manual **Preparar WhatsApp** sigue disponible y no forma parte de esta automatización. Para que el envío funcione, configura un remitente verificado y sus credenciales SMTP en n8n. Un envío fallido se puede reintentar una vez.
 
 Para habilitarlo en el proyecto Supabase elegido:
 

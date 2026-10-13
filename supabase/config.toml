@@ -19,7 +19,12 @@ port = 54323
 [auth]
 enabled = true
 site_url = "http://localhost:5173"
-additional_redirect_urls = ["http://127.0.0.1:5173"]
+additional_redirect_urls = [
+  "http://127.0.0.1:5173",
+  "http://localhost:5173/portal",
+  "http://127.0.0.1:5173/portal",
+  "https://cobra.techost.cloud/portal",
+]
 enable_signup = true
 
 [auth.email]
@@ -34,4 +39,10 @@ verify_jwt = true
 verify_jwt = false
 
 [functions.invite-clinic-member]
+verify_jwt = true
+
+[functions.invite-patient-portal]
+verify_jwt = true
+
+[functions.revoke-patient-portal]
 verify_jwt = true
