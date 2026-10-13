@@ -30,5 +30,8 @@ enable_confirmations = false
 [functions.bcv-rate]
 verify_jwt = true
 
+[functions.email-payment-reminders]
+verify_jwt = false
+
 [functions.invite-clinic-member]
 verify_jwt = true

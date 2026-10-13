@@ -62,6 +62,20 @@ La persona propietaria administra invitaciones y revocaciones de asistentes desd
 
 Después de aplicar las migraciones, despliega las funciones en el proyecto enlazado con `pnpm exec supabase functions deploy bcv-rate` y `pnpm exec supabase functions deploy invite-clinic-member`. Supabase proporciona las claves de servidor a las funciones; no copies una clave `service_role` o `secret` a la configuración pública de la web.
 
+## Recordatorios de pago por correo
+
+El flujo de n8n **OdontoCuenta | Recordatorios de pago por correo** consulta diariamente las cuotas que vencen al día siguiente, a las 9:00 de `America/Caracas`. Solo considera pacientes con correo registrado, consentimiento de recordatorios por correo vigente y una cuota con saldo en un plan activo. El correo incluye monto y fecha, sin información del tratamiento. El consentimiento de correo es independiente del consentimiento para WhatsApp; el botón manual **Preparar WhatsApp** sigue disponible y no forma parte de esta automatización. El flujo de n8n queda inactivo hasta configurarlo y activarlo manualmente.
+
+Para habilitarlo en el proyecto Supabase elegido:
+
+1. Aplica la migración con `pnpm db:push`.
+2. Crea un secreto aleatorio largo y guárdalo como `ODONTO_EMAIL_REMINDERS_SECRET` en Supabase y en la credencial de autenticación HTTP de n8n. No lo pegues en el código ni en el chat.
+3. Despliega la función con `pnpm exec supabase functions deploy email-payment-reminders`. La función usa `SUPABASE_SERVICE_ROLE_KEY` solo del lado de Supabase; esa clave nunca se configura en n8n ni en la web.
+4. En el flujo de n8n, completa la URL `https://<project-ref>.supabase.co/functions/v1/email-payment-reminders`, asigna la credencial Bearer de la función a los tres nodos HTTP y agrega una credencial SMTP y el correo remitente verificado al nodo de email.
+5. Revisa el correo de prueba y activa el flujo en n8n cuando estén listas las credenciales. No ejecutes el nodo de envío contra datos reales como prueba.
+
+El formulario de paciente guarda la fecha de autorización por correo y permite revocarla desmarcando el consentimiento. La función selecciona las cuotas de forma segura en Supabase y registra cada envío para no repetir el mismo recordatorio.
+
 ## Interfaz y temas
 
 La interfaz usa la identidad visual de la odontóloga: oro claro, crema, taupe y carbón. Los temas claro y oscuro se definen principalmente en `apps/web/src/brand.css` y `apps/web/src/brand-theme.css`; al añadir componentes, reutiliza esos tokens y evita acentos verdes o verde azulado. Mantén las reglas de tema en esas hojas compartidas y no agregues una nueva capa de overrides inline a `App.tsx`. Los SVG deben heredar un color legible (`currentColor`) en ambos temas. Los controles de texto usan 14 px como mínimo en escritorio y 16 px en móvil. La revisión de pantallas vigente está en [AUDITORIA-UI-UX.md](AUDITORIA-UI-UX.md).
