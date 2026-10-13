@@ -188,8 +188,9 @@ html[data-theme="dark"] body .app-shell .patient-portal-access-card .patient-por
 .patient-portal-access-email { display: grid; gap: 6px; margin-top: 15px; color: var(--pp-muted); font-size: 11px; font-weight: 700; }
 .patient-portal-access-email input { width: 100%; min-height: 42px; padding: 0 12px; border: 1px solid var(--pp-line); border-radius: 10px; background: var(--pp-bg); color: var(--pp-ink); font: inherit; font-size: 14px; }
 .patient-portal-access-email input:focus-visible { outline: 3px solid var(--pp-gold-bright); outline-offset: 1px; }
-.patient-portal-access-note { display: flex; align-items: center; gap: 6px; margin: 14px 0 0; color: var(--pp-muted); font-size: 12px; line-height: 1.5; }
+.patient-portal-access-note { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: 6px; margin: 14px 0 0; color: var(--pp-muted); font-size: 12px; line-height: 1.5; }
 .patient-portal-access-note svg { flex: none; color: var(--pp-gold); }
+.patient-portal-access-note > span { min-width: 0; overflow-wrap: anywhere; }
 .patient-portal-access-note b { color: var(--pp-ink); }
 .patient-portal-access-error { margin: 12px 0 0; color: var(--pp-danger); font-size: 12px; line-height: 1.5; }
 .patient-portal-access-actions { display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
