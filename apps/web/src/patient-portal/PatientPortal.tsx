@@ -28,7 +28,7 @@ export function PatientPortal({ activateAccess, loadAccount, isSessionActive, re
   const [loginEmail, setLoginEmail] = useState('')
   const [loginSent, setLoginSent] = useState(false)
   const [sendingLogin, setSendingLogin] = useState(false)
-  const [loginError, setLoginError] = useState<string | null>(null)
+  const [loginError, setLoginError] = useState<string | null>(() => readPortalLinkError())
   const closedRef = useRef(false)
   const hadPortalAccessRef = useRef(false)
   const activationRef = useRef(activateAccess)
@@ -328,6 +328,25 @@ function errorDetails(error: unknown) {
   }
   if (error instanceof Error) return { code: '', message: error.message }
   return { code: '', message: '' }
+}
+
+function readPortalLinkError(): string | null {
+  if (typeof window === 'undefined') return null
+  const params = new URLSearchParams(window.location.search)
+  const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''))
+  const errorCode = params.get('error_code') ?? hashParams.get('error_code') ?? ''
+  const description = params.get('error_description') ?? hashParams.get('error_description') ?? ''
+  const normalizedDescription = description.toLowerCase()
+  let message: string | null = null
+
+  if (errorCode === 'otp_expired' || /email link is invalid|has expired|expired otp/.test(normalizedDescription)) {
+    message = 'El enlace venció o ya fue utilizado. Ingresa el correo invitado y solicita uno nuevo.'
+  } else if (errorCode || params.has('error') || hashParams.has('error')) {
+    message = 'No se pudo validar el enlace. Solicita uno nuevo con el correo invitado.'
+  }
+
+  if (message) window.history.replaceState({}, document.title, window.location.pathname)
+  return message
 }
 
 function downloadStatement(account: PatientPortalAccount) {

@@ -28,6 +28,22 @@ type PatientPortalAccess = { id: string; invited_email: string; status: 'invited
 
 const DEFAULT_WHATSAPP_MESSAGE_TEMPLATE = 'Hola, {nombre}. Te escribimos de {clínica} para recordarte que tu cuota de {monto} correspondiente a {tratamiento} vence el {fecha}. Si ya realizaste el pago, puedes ignorar este mensaje. Si tienes alguna duda, responde por aquí o llámanos al {teléfono}. Si no deseas recibir recordatorios por WhatsApp, responde BAJA.'
 const renderWhatsAppMessage = (template: string, values: Record<string, string>) => template.replace(/\{([^{}]+)\}/g, (placeholder, key: string) => values[key] ?? placeholder)
+async function edgeFunctionErrorMessage(error: unknown, fallback: string) {
+  if (error && typeof error === 'object') {
+    const record = error as { context?: unknown; message?: unknown }
+    const context = record.context
+    if (context && typeof context === 'object' && 'json' in context && typeof context.json === 'function') {
+      try {
+        const response = context as Response
+        const body = await response.clone().json() as { error?: unknown; message?: unknown }
+        if (typeof body.error === 'string') return body.error
+        if (typeof body.message === 'string') return body.message
+      } catch { /* Fall back to the SDK error text below. */ }
+    }
+    if (typeof record.message === 'string' && record.message !== 'Edge Function returned a non-2xx status code') return record.message
+  }
+  return fallback
+}
 const whatsappUrl = (phone: string, message: string) => {
   const digits = phone.replace(/\D/g, '')
   return digits ? `https://wa.me/${digits}?text=${encodeURIComponent(message)}` : ''
@@ -1456,7 +1472,7 @@ function PatientStatement({ clinicName, clinicPhone, messageTemplate, patient, c
       await refreshPortalAccess()
       if (data?.warning) throw new Error(data.warning)
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'No se pudo enviar la invitación.'
+      const message = await edgeFunctionErrorMessage(error, 'No se pudo enviar la invitación.')
       setPortalError(message)
       throw new Error(message)
     } finally { setPortalBusy(false) }
@@ -1473,7 +1489,7 @@ function PatientStatement({ clinicName, clinicPhone, messageTemplate, patient, c
       if (data?.error) throw new Error(data.error)
       await refreshPortalAccess()
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'No se pudo revocar el acceso.'
+      const message = await edgeFunctionErrorMessage(error, 'No se pudo revocar el acceso.')
       setPortalError(message)
       throw new Error(message)
     } finally { setPortalBusy(false) }
